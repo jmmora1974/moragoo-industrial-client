@@ -1,0 +1,7 @@
+{
+  "name": "moragoo-client",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
