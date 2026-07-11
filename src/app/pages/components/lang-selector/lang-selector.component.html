@@ -1,0 +1,9 @@
+<ion-select
+  interface="popover"
+  [value]="lang.currentLang()"
+  (ionChange)="changeLang($event.detail.value)"
+>
+  @for (l of languages(); track l.code) {
+    <ion-select-option [value]="l.code">{{ l.label }}</ion-select-option>
+  }
+</ion-select>

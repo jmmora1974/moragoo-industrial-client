@@ -1,0 +1,36 @@
+<ion-content class="login-content">
+
+  <ion-list>
+
+    <ion-item>
+      <ion-label position="stacked">Proveedor</ion-label>
+      <ion-select
+        [value]="selectedProvider()"
+        (ionChange)="onProviderChange($event.detail.value)">
+        @for (p of providerKeys(); track p) {
+          <ion-select-option [value]="p">
+            {{ providers()[p].name }}
+          </ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    @for (field of fields(); track field.id) {
+      <ion-item>
+        <ion-label position="stacked">{{ field.label }}</ion-label>
+        <ion-input
+          [type]="field.type"
+          [value]="form()[field.id] ?? ''"
+          (ionInput)="updateField(field.id, $any($event.target).value)">
+        </ion-input>
+      </ion-item>
+    }
+
+  </ion-list>
+
+  <div class="login-buttons">
+    <ion-button expand="block" (click)="doLogin()">Entrar</ion-button>
+    <ion-button expand="block" color="medium" (click)="cancel()">Cancelar</ion-button>
+  </div>
+
+</ion-content>

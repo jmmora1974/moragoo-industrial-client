@@ -34,4 +34,51 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
+
 @import '@ionic/angular/css/palettes/dark.system.css';
+/* VARIABLES BASE (siempre existen) */
+:root {
+  --background: #06c536;
+  --color: #222;
+  --toolbar-background: #f8f8f8;
+  --toolbar-color: #333;
+  --accent: #ffd54f;
+}
+
+/* TEMA LIGHT */
+:root[data-theme='light'] {
+  --background: #ffffff;
+  --color: #222;
+  --toolbar-background: #f8f8f8;
+  --toolbar-color: #333;
+  --accent: #ffd54f;
+}
+
+/* TEMA INDUSTRIAL */
+:root[data-theme='industrial'] {
+  --background: #1e1e1e;
+  --color: #e0e0e0;
+  --toolbar-background: #1e1e1e;
+  --toolbar-color: #d4af37;
+  --accent: #d4af37;
+}
+
+/* TEMA DARK */
+:root[data-theme='dark'] {
+  --background: #000;
+  --color: #eee;
+  --toolbar-background: #111;
+  --toolbar-color: #ccc;
+  --accent: #6a4fbf;
+}
+
+
+ion-toolbar {
+  --background: var(--toolbar-background);
+  --color: var(--toolbar-color);
+}
+
+ion-title {
+  color: var(--accent);
+  
+}

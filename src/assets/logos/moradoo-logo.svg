@@ -1,0 +1,41 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glow difuminado -->
+  <defs>
+    <filter id="moradooGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Círculo estilo Odoo con corte lateral -->
+  <path
+    d="M120 30
+       A90 90 0 1 1 119 30
+       M195 120
+       A75 75 0 1 0 195 119"
+    stroke="#7c3aed"
+    stroke-width="22"
+    stroke-linecap="round"
+    fill="none"
+    filter="url(#moradooGlow)"
+  />
+
+  <!-- M friendly -->
+  <path
+    d="M75 155
+       L75 95
+       Q75 80 90 80
+       Q105 80 120 105
+       Q135 80 150 80
+       Q165 80 165 95
+       L165 155"
+    stroke="#ffffff"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+</svg>

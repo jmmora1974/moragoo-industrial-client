@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ lang.t('provider.select') }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">{{ lang.t('provider.cancel') }}</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Lista de proveedores -->
+  <ion-list>
+    @for (p of providers(); track p.id) {
+      <ion-item
+        (click)="selectProvider(p.id)"
+        [color]="selectedProvider() === p.id ? 'primary' : ''"
+      >
+        {{ p.label }}
+      </ion-item>
+    }
+  </ion-list>
+
+  <!-- Formulario dinámico -->
+  @if (selectedProvider()) {
+    @for (field of fields(); track field.name) {
+      <ion-item>
+        <ion-input
+          [placeholder]="field.placeholder"
+          (ionInput)="updateField(field.name, $event.detail.value)"
+        ></ion-input>
+      </ion-item>
+    }
+
+    <ion-button expand="block" (click)="submit()">
+      {{ lang.t('provider.submit') }}
+    </ion-button>
+  }
+
+</ion-content>

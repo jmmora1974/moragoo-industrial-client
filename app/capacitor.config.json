@@ -1,0 +1,10 @@
+{
+  "appId": "com.moragoo.client",
+  "appName": "moragoo-client",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}

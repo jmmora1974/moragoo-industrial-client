@@ -1,0 +1,175 @@
+.header-grid {
+  width: 100%;
+}
+
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO */
+.header-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-industrial {
+  height: 50px;
+  filter: drop-shadow(0 0 2px #d4af37);
+}
+
+/* TÍTULO */
+.header-title {
+  text-align: center;
+}
+
+/* SERVER BLOCK */
+.header-server-block {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CHIP DEL SERVIDOR */
+.server-chip {
+  --background: #222;
+  --color: var(--accent);
+  border-radius: 16px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.server-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+}
+
+/* ESTADO */
+.status-dot {
+  width: 14px;
+  height: 14px;
+}
+
+.status-dot.ok {
+  color: #3ddc84;
+  filter: drop-shadow(0 0 4px #3ddc84);
+}
+
+.status-dot.fail {
+  color: #d9534f;
+  filter: drop-shadow(0 0 4px #d9534f);
+}
+
+/* REFRESCO */
+.refresh-item {
+  min-width: 160px;
+}
+
+.refresh-select {
+  min-width: 120px;
+  max-width: 160px;
+}
+
+/* BOTÓN CONECTAR estilo chip */
+.connect-chip {
+  --background: #222;
+  --color: var(--accent);
+  border-radius: 16px;
+  padding: 4px 12px;
+  border: 1px solid var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+}
+
+/* IDIOMA + TEMA + LOGIN */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header-title {
+    text-align: center;
+  }
+
+  .header-server-block {
+    justify-content: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+}
+
+.status-dot {
+  width: 16px;
+  height: 16px;
+  color: currentColor !important;
+}
+
+.status-dot.ok {
+  color: #3ddc84 !important;
+  filter: drop-shadow(0 0 4px #3ddc84);
+}
+
+.status-dot.fail {
+  color: #d9534f !important;
+  filter: drop-shadow(0 0 4px #d9534f);
+}
+
+.refresh-item {
+  display: inline-flex;
+  align-items: center;
+  --min-height: 36px;
+  min-width: 160px;
+  max-width: 180px;
+}
+.refresh-select {
+  min-width: 100px;
+  max-width: 140px;
+}
+
+.header-server-block {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@media (max-width: 768px) {
+  .header-server-block {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header-logo {
+    justify-content: center;
+  }
+
+  .header-title {
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+}
