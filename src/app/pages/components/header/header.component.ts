@@ -21,7 +21,7 @@ import { LangService } from '../../../services/lang.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonButtons, IonIcon, IonButton,
+    IonHeader, IonToolbar, IonTitle,  IonIcon, IonButton,
     IonRange, IonChip, IonLabel, IonItem, IonSelect, IonSelectOption,
     CommonModule, LangSelectorComponent, IonCol, IonRow, IonGrid
   ]

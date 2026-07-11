@@ -11,7 +11,8 @@ export class ThemeService {
   current = signal<Theme>('industrial');
 setTheme(theme: Theme) {
   this.current.set(theme);
-  document.body.setAttribute('data-theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+
 
   const meta = document.querySelector("meta[name='theme-color']");
   if (meta) {

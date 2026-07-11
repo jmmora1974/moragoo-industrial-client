@@ -1,8 +1,8 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar >
 
-    <ion-grid class="header-grid">
-      <ion-row class="header-row" align-items-center>
+    <ion-grid class="header-grid"  >
+      <ion-row class="header-row align-items-center" >
 
         <!-- LOGO -->
         <ion-col size="12" size-md="2" class="header-logo">
@@ -10,7 +10,7 @@
         </ion-col>
 
         <!-- TÍTULO -->
-        <ion-col size="12" size-md="3" class="header-title">
+        <ion-col size="12" size-md="3" class="header-title" >
           <ion-title>
             {{ langService.t('header.title') }}
           </ion-title>
@@ -18,7 +18,8 @@
 
         <!-- SERVER + ESTADO + REFRESCO + CONECTAR -->
         <ion-col size="12" size-md="4" class="header-server-block">
-
+      <ion-item lines="none">
+         
         <ion-chip class="server-chip">
           <ion-icon class="server-icon" src="assets/icon/infra-server.svg"></ion-icon>
 
@@ -26,17 +27,17 @@
             {{ moragooService.MoragooServerUrl() }}:{{ moragooService.MoragooServerPort() }}
           </ion-label>
 
-          <ion-icon 
+         
+        </ion-chip>
+         
+        
+          <ion-icon  
             class="status-dot"
             [class.ok]="moragooService.MoragooServerAlive()"
             [class.fail]="!moragooService.MoragooServerAlive()"
             src="assets/icon/sys-ok.svg">
           </ion-icon>
-        </ion-chip>
-
-        <ion-item lines="none" class="refresh-item">
-          <ion-label>{{ langService.t('header.refresh') }}</ion-label>
-
+           
           <ion-select 
             interface="popover"
             [value]="moragooService.refreshRate()"
@@ -60,7 +61,7 @@
         <ion-col size="12" size-md="3" class="header-actions">
 
           <app-lang-selector></app-lang-selector>
-
+           
           <ion-range 
             min="0"
             max="2"
