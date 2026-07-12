@@ -42,12 +42,11 @@ export class ModalProvidersComponent {
   selectedProvider = signal<string | null>(null);
   formData = signal<Record<string, any>>({});
 
-  // Providers como signal computado
-  providers = computed(() => this.providersService.providers());
+  // ✔ CORREGIDO: usar el signal directamente
+  providers = this.providersService.providers;
 
   constructor() {
 
-    // 🔥 Aquí detectamos proveedores incompletos o fallo del backend
     effect(() => {
       const list = this.providers();
 
@@ -56,10 +55,8 @@ export class ModalProvidersComponent {
         this.providersService.forceLocalPINX();
       }
     });
-
   }
 
-  // Campos dinámicos del proveedor seleccionado
   fields = computed(() => {
     const id = this.selectedProvider();
     if (!id) return [];
@@ -73,7 +70,6 @@ export class ModalProvidersComponent {
   }
 
   async showCriticalAlert() {
-    
     const alert = await this.modalCtrl.create({
       component: CriticalAlertComponent,
       componentProps: {
@@ -106,7 +102,4 @@ export class ModalProvidersComponent {
   cancel() {
     this.modalCtrl.dismiss(null);
   }
-
-
-  
 }

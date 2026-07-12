@@ -1,6 +1,6 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { Injectable, signal, effect, inject } from '@angular/core';
 import { MoragooService } from './moragoo.service';
-import {ProviderInfo} from '../types/provider.type';
+import { ProviderInfo } from '../types/provider.type';
 
 @Injectable({ providedIn: 'root' })
 export class ProvidersService {
@@ -21,8 +21,8 @@ export class ProvidersService {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const raw = await res.json();
-
       const normalized = this.normalizeProviders(raw);
+
       this.providers.set(normalized);
 
     } catch (err) {
@@ -39,8 +39,8 @@ export class ProvidersService {
       label: p.name,
       type: p.type,
       activated: true,
-      mode: 'basic',          // porque tu backend no devuelve mode
-      fields: [],             // tu backend no devuelve credentials
+      mode: 'basic',
+      fields: [],          // tu backend aún no devuelve credentials
       domain: null,
       capabilities: {},
       metadata: {}
@@ -70,37 +70,36 @@ export class ProvidersService {
     }
   }
 
+  // ✔ PINX local, sin errores TS, sin conflictos
   forceLocalPINX() {
-  this.providers.set([
-    {
-      id: "local",
-      label: "Acceso Local PINX",
-      type: "local",
-      activated: true,
-      mode: "local",
-      fields: [
-        { id: "alias", name: "alias", label: "Alias", type: "text", required: true },
-        { id: "pinx_code", name: "pinx_code", label: "PINX", type: "password", required: true }
-      ],
-      domain: null,
-      capabilities: {
-        fingerprint: true,
-        mfa: false,
-        totp: false,
-        webauthn: false,
-        passkeys: false,
-        firebase: false,
-        oauth2: false,
-        refresh_token: false
-      },
-      metadata: {
-        color: "#888888",
-        icon: "shield",
-        group: "core"
+    this.providers.set([
+      {
+        id: "local",
+        label: "Acceso Local PINX",
+        type: "local",
+        activated: true,
+        mode: "local",
+        fields: [
+          { id: "alias", name: "alias", label: "Alias", type: "text", required: true },
+          { id: "pinx_code", name: "pinx_code", label: "PINX", type: "password", required: true }
+        ],
+        domain: null,
+        capabilities: {
+          fingerprint: true,
+          mfa: false,
+          totp: false,
+          webauthn: false,
+          passkeys: false,
+          firebase: false,
+          oauth2: false,
+          refresh_token: false
+        },
+        metadata: {
+          color: "#888888",
+          icon: "shield",
+          group: "core"
+        }
       }
-    }
-  ]);
+    ]);
+  }
 }
-
-}
-
