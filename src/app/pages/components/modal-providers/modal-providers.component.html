@@ -14,18 +14,31 @@
     @for (p of providers(); track p.id) {
       <ion-item
         (click)="selectProvider(p.id)"
-        [color]="selectedProvider() === p.id ? 'primary' : ''"
+        [color]="selectedProvider() === p.id ? 'primary' : undefined"
       >
-        {{ p.label }}
+        <ion-avatar slot="start">
+          <ion-icon [name]="p.metadata?.icon ?? 'key'"></ion-icon>
+        </ion-avatar>
+
+        <ion-label>
+          {{ p.label }}
+        </ion-label>
+
+        <ion-badge slot="end" [style.background]="p.metadata?.color">
+          {{ p.mode }}
+        </ion-badge>
       </ion-item>
     }
   </ion-list>
 
   <!-- Formulario dinámico -->
   @if (selectedProvider()) {
+
+    <!-- Campos dinámicos -->
     @for (field of fields(); track field.name) {
       <ion-item>
         <ion-input
+          [type]="field.type"
           [placeholder]="field.placeholder"
           (ionInput)="updateField(field.name, $event.detail.value)"
         ></ion-input>

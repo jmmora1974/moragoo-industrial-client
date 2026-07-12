@@ -18,51 +18,49 @@
 
         <!-- SERVER + ESTADO + REFRESCO + CONECTAR -->
         <ion-col size="12" size-md="4" class="header-server-block">
-      <ion-item lines="none">
-         
-        <ion-chip class="server-chip">
-          <ion-icon class="server-icon" src="assets/icon/infra-server.svg"></ion-icon>
+          <ion-item lines="none">
+          
+          <ion-chip class="server-chip">
+            <ion-icon class="server-icon" src="assets/icon/infra-server.svg"></ion-icon>
 
-          <ion-label>
-            {{ moragooService.MoragooServerUrl() }}:{{ moragooService.MoragooServerPort() }}
-          </ion-label>
+            <ion-label>
+              {{ moragooService.MoragooServerUrl() }}:{{ moragooService.MoragooServerPort() }}
+            </ion-label>
 
-         
-        </ion-chip>
-         
-        
-          <ion-icon  
-            class="status-dot"
-            [class.ok]="moragooService.MoragooServerAlive()"
-            [class.fail]="!moragooService.MoragooServerAlive()"
-            src="assets/icon/sys-ok.svg">
-          </ion-icon>
-           
-          <ion-select 
-            interface="popover"
-            [value]="moragooService.refreshRate()"
-            (ionChange)="updateRate($event)"
-            class="refresh-select"
-            compareWith="compareRefresh"
-          >
-            <ion-select-option value="500">0.5s</ion-select-option>
-            <ion-select-option value="1000">1s</ion-select-option>
-            <ion-select-option value="5000">5s</ion-select-option>
-            <ion-select-option value="30000">30s</ion-select-option>
-            <ion-select-option value="60000">1m</ion-select-option>
-            <ion-select-option value="300000">5m</ion-select-option>
-            <ion-select-option value="600000">10m</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-      </ion-col>
+          
+          </ion-chip>
+          
+          
+            <ion-icon  
+              class="status-dot"
+              [class.ok]="moragooService.MoragooServerAlive()"
+              [class.fail]="!moragooService.MoragooServerAlive()"
+              src="assets/icon/sys-ok.svg">
+            </ion-icon>
+            
+            <ion-select
+                value="5000"
+                (ionChange)="updateRate($event)"
+                interface="popover"
+              >
+              <ion-select-option value="500">0.5s</ion-select-option>
+              <ion-select-option value="1000">1s</ion-select-option>
+              <ion-select-option value="5000">5s</ion-select-option>
+              <ion-select-option value="30000">30s</ion-select-option>
+              <ion-select-option value="60000">1m</ion-select-option>
+              <ion-select-option value="300000">5m</ion-select-option>
+              <ion-select-option value="600000">10m</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
 
         <!-- IDIOMA + TEMA + LOGIN -->
         <ion-col size="12" size-md="3" class="header-actions">
 
           <app-lang-selector></app-lang-selector>
            
-          <ion-range 
+          <ion-range
+            [value]="rangeValue"
             min="0"
             max="2"
             step="1"
@@ -74,7 +72,8 @@
             <ion-icon slot="end" src="assets/icon/snow-outline.svg"></ion-icon>
           </ion-range>
 
-          <ion-button color="secondary">
+
+          <ion-button color="warning" (click)="openLogin()">
             {{ langService.t('header.login') }}
           </ion-button>
 

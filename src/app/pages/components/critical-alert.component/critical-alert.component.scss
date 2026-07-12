@@ -1,0 +1,16 @@
+:host {
+  --background: #1a1a1a;
+}
+
+ion-content {
+  background: var(--background);
+}
+
+ion-toolbar {
+  --background: #b00020; /* rojo industrial */
+  --color: white;
+}
+
+ion-text {
+  color: white;
+}

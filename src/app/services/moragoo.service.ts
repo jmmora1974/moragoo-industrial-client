@@ -35,33 +35,33 @@ export class MoragooService {
   updateRate(rate: number) {
     this.refreshRate.set(rate);
 
-    clearInterval(this.keepAliveTimer);
-    this.keepAliveTimer = setInterval(() => this.checkServer(), rate);
+    if (this.keepAliveTimer) {
+      clearInterval(this.keepAliveTimer);
+    }
 
+    this.keepAliveTimer = setInterval(() => this.checkServer(), rate);
     this.addLog(`Nueva tasa de refresco: ${rate}ms`);
   }
 
   get fullUrl() {
+   // console.log(`${this.MoragooServerUrl()}:${this.MoragooServerPort()}`);
     return `${this.MoragooServerUrl()}:${this.MoragooServerPort()}`;
   }
 
-  startKeepAlive() {
-    // cada 5 segundos (luego será configurable)
-    setInterval(() => {
-      this.checkServer();
-    }, 5000);
-  }
+async checkServer() {
+  
+  const url = `${this.fullUrl}`;
 
-  async checkServer() {
-    const url = `${this.fullUrl}/json/connector`;
-
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      this.MoragooServerAlive.set(res.ok);
-    } catch {
-      this.MoragooServerAlive.set(false);
-    }
+  try {
+    const res = await fetch(url, { method: 'GET' });
+    this.MoragooServerAlive.set(true);
+    
+  } catch {
+    this.MoragooServerAlive.set(false);
+    
   }
+  
+}
 
   // ---------------------------------------------------------
   // DISPOSITIVOS Y PROCESOS INDUSTRIALES
@@ -85,7 +85,10 @@ export class MoragooService {
     this.initDeviceInfo();
     this.initNetworkMonitor();
     this.generateFingerprint();
-    this.startKeepAlive();
+    
+    // Iniciar el keepalive con el valor inicial del selector
+    this.updateRate(this.refreshRate())
+
     effect(() => {
       this.addLog(`Estado: ${this.status()}`);
     });

@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-text color="danger">
+    <h2 style="font-weight: bold; margin-bottom: 12px;">
+      ⚠️ Atención
+    </h2>
+  </ion-text>
+
+  <ion-text>
+    <p style="font-size: 15px; line-height: 1.5;">
+      {{ message }}
+    </p>
+  </ion-text>
+
+  <ion-button expand="block" color="danger" style="margin-top: 20px;" (click)="close()">
+    Cerrar
+  </ion-button>
+
+</ion-content>
