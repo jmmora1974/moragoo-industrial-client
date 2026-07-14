@@ -154,7 +154,7 @@ export class ModalProvidersComponent {
       // Toast
       const toast = await this.toastCtrl.create({
         message: this.lang.t('log.login_ok'),
-        duration: 3000,
+        duration: 1000,
         color: 'success'
       });
       toast.present();

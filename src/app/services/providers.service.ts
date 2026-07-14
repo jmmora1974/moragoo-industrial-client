@@ -3,7 +3,7 @@ import { MoragooService } from './moragoo.service';
 import { ProviderInfo } from '../types/provider.type';
 import { LangService } from './lang.service';
 import { SessionService } from './session.service';
-import {  HttpClient } from '@angular/common/http';
+
 import { BackendService } from './backend.service';
 
 
@@ -16,7 +16,7 @@ export class ProvidersService {
   moragooService = inject(MoragooService);
   langService = inject(LangService);
   sessionService = inject(SessionService);
-  httpClient = inject(HttpClient);
+  
   backend= inject(BackendService);
   
 
@@ -96,8 +96,8 @@ export class ProvidersService {
       provider: providerId ?? 'local',          
       fingerprint   // 🔥 completo
     };
-
-    return this.backend.post('/api/auth/login', payload);
+    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/login`;
+    return this.backend.post(url, payload);
 
   }
 
@@ -123,8 +123,8 @@ export class ProvidersService {
    // 🔥 LOGOUT industrial
   logout() {
     const url = `${this.moragooService.MoragooServerUrl()}/api/auth/logout`;
-    this.sessionService.clearPersistent();
-    return this.httpClient.post(url, {}); // POST es más correcto para logout
+    //this.sessionService.clearPersistent();
+    return this.backend.post(url, {}); // POST es más correcto para logout
   }
 
 }

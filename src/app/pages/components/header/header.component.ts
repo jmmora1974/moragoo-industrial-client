@@ -93,8 +93,9 @@ export class HeaderComponent {
     // LOGOUT
     // ---------------------------------------------------------
     if (session.mode === 'authenticated') {
-      this.logout();
-      return;
+      //this.sessionService.resetSession();
+      
+      return this.logout();
     }
    
 
@@ -110,22 +111,35 @@ export class HeaderComponent {
 
     async logout() {
 
-      // 1. Llamar al backend
-      await this.providersService.logout(); // si no existe, te lo preparo
+      // 1. Resetear sesión correctamente
+      this.sessionService.resetSession();
 
-      // 2. Actualizar sesión sin borrar fingerprint ni server
-      this.sessionService.startSession();
-
-      // 3. Log
+      // 2. Log
       this.moragooService.addLog(this.langService.t('generic.logout'));
 
-      // 4. Toast
+      // 3. Toast
       const toast = await this.toastCtrl.create({
         message: this.langService.t('generic.logout'),
         duration: 2000,
         color: 'medium'
       });
       toast.present();
+
+      // 4. Llamar al backend
+      try {
+        const res2 = await this.providersService.logout();
+      } catch {
+        this.moragooService.addLog(this.langService.t('generic.logout.error'));
+
+        const toast = await this.toastCtrl.create({
+          message: this.langService.t('generic.logout.error'),
+          duration: 2000,
+          color: 'medium'
+        });
+        toast.present();
+      }
     }
+
+
 
 }

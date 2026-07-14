@@ -3,6 +3,8 @@ import { SessionData } from '../types/session.type';
 import { MoragooService } from './moragoo.service';
 import { LangService } from './lang.service';
 
+import { BackendService } from './backend.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +26,8 @@ export class SessionService {
     roles: [],
     token: ''
   });
+  
+  backendService= inject(BackendService);
 
   constructor() {
     this.loadPersistent();
@@ -37,6 +41,7 @@ export class SessionService {
     const s = this.session();
 
     const safe = {
+      mode: s.mode,
       server: s.server,
       user: s.user,
       roles: s.roles,
@@ -97,6 +102,21 @@ export class SessionService {
     localStorage.removeItem('moragoo-session');
     this.moragooService.addLog(this.lang.t('log.session_cleared'));
   }
+  resetSession() {
+    // 1) Limpiar sesión en memoria
+    this.session().user = '';
+    this.session().roles = [];
+    this.session().permissions = [];
+    this.session().mode = 'guest';
+    this.session().module = 'core';
+    this.session().token = '';
+
+    // 2) Limpiar persistencia
+    this.clearPersistent();
+
+    // 3) Crear sesión nueva desde cero (con fingerprint y server)
+    this.startSession();
+  }
 
   // ---------------------------------------------------------
   // SETTERS
@@ -107,28 +127,15 @@ export class SessionService {
     this.savePersistent();
   }
 
-  clear() {
-    this.clearPersistent();
-/*
-    const guest: SessionData = {
-      mode: 'guest',
-      sessionName: 'guest-session',
-      fingerprint: {},
-      device: 'web-browser',
-      module: 'core',
-      platform: 'web',
-      version: 'web',
-      server: '',
-      network: navigator.onLine ? 'online' : 'offline',
-      user: '',
-      roles: [],
-      token: ''
-    };
+ 
 
-    this.session.set(guest);
-*/
-    this.moragooService.addLog(this.lang.t('log.session_reset'));
+ logout() {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/logout`;
+    return this.backendService.post(url, {}); // POST es más correcto para logout
+  
   }
+
+
 
   // ---------------------------------------------------------
   // INICIO DE SESIÓN
@@ -139,7 +146,7 @@ export class SessionService {
 
     const updated: SessionData = {
       ...this.session(),
-      mode: 'guest',
+      mode: this.session().mode || 'guest',
       module: 'core',
       fingerprint,
       server: this.moragooService.MoragooServerUrl()

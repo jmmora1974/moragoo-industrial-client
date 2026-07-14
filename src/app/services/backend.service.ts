@@ -1,62 +1,41 @@
-import { Injectable, inject } from '@angular/core';
-import { SessionService } from './session.service';
-import { MoragooService } from './moragoo.service';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class BackendService {
 
-  private session = inject(SessionService);
-  private moragoo = inject(MoragooService);
-
-  private get baseUrl() {
-    return this.moragoo.MoragooServerUrl();
-  }
-
-  private get headers() {
-    const s = this.session.session();
-
-    // fingerprint DIOS siempre como string
-    const fpObj = s.fingerprint || this.moragoo.fingerprint() || null;
-
-    // TS exige index signature
-    const fp = fpObj?.['fingerprint'] ?? '';
-
-    const token = s.token || '';
-
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : '',
-        'X-Fingerprint': fp,   // 🔥 SIEMPRE string
-    };
-    }
-
-
-
-
-  // ---------------------------------------------------------
-  // GET
-  // ---------------------------------------------------------
-  async get(path: string) {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+  async get(url: string, options?: { headers?: Record<string, string> }) {
+    const res = await fetch(url, {
       method: 'GET',
-      headers: this.headers
+      headers: options?.headers ?? {}
     });
 
-    if (!res.ok) throw new Error(await res.text());
-    return res.json();
+    const text = await res.text();
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
   }
 
-  // ---------------------------------------------------------
-  // POST
-  // ---------------------------------------------------------
-  async post(path: string, body: any) {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+  
+  async post(url: string, body: any, options?: { headers?: Record<string, string> }) {
+    const res = await fetch(url, {
       method: 'POST',
-      headers: this.headers,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.headers ?? {})
+      },
       body: JSON.stringify(body)
     });
 
-    if (!res.ok) throw new Error(await res.text());
-    return res.json();
+    const text = await res.text();
+
+    try {
+      return JSON.parse(text);   // 🔥 si es JSON, lo parsea
+    } catch {
+      return text;               // 🔥 si no es JSON, devuelve texto plano
+    }
   }
+
 }

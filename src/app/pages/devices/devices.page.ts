@@ -42,7 +42,7 @@ detectedDevices = signal<any[]>([
     version: '2.1.0'
   }
 ]);
-foundDevices =signal<any[]>(this.moragooService.deviceInfo());
+
 
 // 🔥 Lista reactiva de dispositivos configurados
 configuredDevices = signal<any[]>([
