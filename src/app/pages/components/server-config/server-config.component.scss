@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  padding: 12px;
+}
+
+/* GRID RESPONSIVE */
+.server-grid {
+  display: grid;
+  gap: 12px;
+}
+
+/* MÓVIL: todo en columna */
+@media (max-width: 600px) {
+  .server-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ESCRITORIO: host | port | status+refresh | botones */
+@media (min-width: 601px) {
+  .server-grid {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center;
+  }
+
+  ion-button {
+    grid-column: span 3;
+  }
+}
+
+/* ITEMS */
+ion-item {
+  --background: var(--ion-color-light);
+  border-radius: 8px;
+  --border-color: var(--ion-color-medium);
+}
+
+/* STATUS DOT */
+.status-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.status-dot.ok {
+  background-color: #3ddc84;
+  filter: drop-shadow(0 0 4px #3ddc84);
+}
+
+.status-dot.fail {
+  background-color: #d9534f;
+  filter: drop-shadow(0 0 4px #d9534f);
+}
+
+/* REFRESH SELECT */
+.refresh-select {
+  min-width: 100px;
+}
+
+/* BOTONES */
+ion-button {
+  height: 44px;
+  font-weight: 600;
+  border-radius: 8px;
+}

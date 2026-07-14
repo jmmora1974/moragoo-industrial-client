@@ -2,18 +2,19 @@ import { Component, inject, effect } from '@angular/core';
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonIcon, IonButton,
   IonRange, IonChip, IonLabel, IonItem, IonSelect, IonSelectOption,
-  IonRow, IonCol, IonGrid,
-  ModalController
+  IonRow, IonCol, IonGrid, ModalController, ToastController
 } from '@ionic/angular/standalone';
 
 import { CommonModule } from '@angular/common';
 import { LangSelectorComponent } from '../lang-selector/lang-selector.component';
 import { RangeCustomEvent } from '@ionic/angular';
+
 import { ThemeService } from '../../../services/theme.service';
 import { MoragooService } from '../../../services/moragoo.service';
 import { LangService } from '../../../services/lang.service';
 import { ModalProvidersComponent } from '../modal-providers/modal-providers.component';
 import { ProvidersService } from 'src/app/services/providers.service';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-header',
@@ -22,20 +23,9 @@ import { ProvidersService } from 'src/app/services/providers.service';
   styleUrls: ['./header.component.scss'],
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonIcon,
-    IonButton,
-    IonRange,
-    IonChip,
-    IonLabel,
-    IonItem,
-    IonSelect,
-    IonSelectOption,
-    IonCol,
-    IonRow,
-    IonGrid,
+    IonHeader, IonToolbar, IonTitle, IonIcon, IonButton,
+    IonRange, IonChip, IonLabel, IonItem, IonSelect, IonSelectOption,
+    IonCol, IonRow, IonGrid,
     LangSelectorComponent
   ]
 })
@@ -46,11 +36,14 @@ export class HeaderComponent {
   langService = inject(LangService);
   modalCtrl = inject(ModalController);
   providersService = inject(ProvidersService);
+  sessionService = inject(SessionService);
+  toastCtrl = inject(ToastController);
 
   rangeValue = 0;
 
   constructor() {
 
+    // Sincronización de tema
     effect(() => {
       const theme = this.themeService.currentTheme();
       this.rangeValue = this.mapThemeToRange(theme);
@@ -59,6 +52,7 @@ export class HeaderComponent {
       }, 0);
     });
 
+    // Estado del servidor
     effect(() => this.moragooService.MoragooServerAlive());
     effect(() => this.moragooService.refreshRate());
     effect(() => this.moragooService.checkServer());
@@ -90,19 +84,48 @@ export class HeaderComponent {
     return Number(a) === Number(b);
   }
 
+  // 🔥 LOGIN / LOGOUT industrial
   async openLogin() {
-    const modal = await this.modalCtrl.create({
-      component: ModalProvidersComponent
-    });
 
-    await modal.present();
+    const session = this.sessionService.session();
 
-    const result = await modal.onWillDismiss();
-
-    if (result.data?.ok) {
-      console.log('LOGIN OK:', result.data);
-    } else {
-      console.warn('LOGIN cancelado o fallido');
+    // ---------------------------------------------------------
+    // LOGOUT
+    // ---------------------------------------------------------
+    if (session.mode === 'authenticated') {
+      this.logout();
+      return;
     }
-  }
+   
+
+    // ---------------------------------------------------------
+    // LOGIN
+    // ---------------------------------------------------------
+    const modal = await this.modalCtrl.create({
+          component: ModalProvidersComponent
+        });
+
+        await modal.present();
+    }
+
+    async logout() {
+
+      // 1. Llamar al backend
+      await this.providersService.logout(); // si no existe, te lo preparo
+
+      // 2. Actualizar sesión sin borrar fingerprint ni server
+      this.sessionService.startSession();
+
+      // 3. Log
+      this.moragooService.addLog(this.langService.t('generic.logout'));
+
+      // 4. Toast
+      const toast = await this.toastCtrl.create({
+        message: this.langService.t('generic.logout'),
+        duration: 2000,
+        color: 'medium'
+      });
+      toast.present();
+    }
+
 }

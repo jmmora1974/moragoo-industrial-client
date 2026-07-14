@@ -1,53 +1,142 @@
+<!-- 🔥 CABECERA DEL MODAL -->
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ lang.t('provider.select') }}</ion-title>
+  <ion-toolbar color="dark">
+    <ion-title>Seleccionar proveedor</ion-title>
+
     <ion-buttons slot="end">
-      <ion-button (click)="cancel()">{{ lang.t('provider.cancel') }}</ion-button>
+      <ion-button (click)="close()">
+        Cerrar
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<!-- 🔥 CONTENIDO DEL MODAL -->
+<ion-content content-id="providers-content">
 
-  <!-- Lista de proveedores -->
-  <ion-list>
-    @for (p of providers(); track p.id) {
-      <ion-item
-        (click)="selectProvider(p.id)"
-        [color]="selectedProvider() === p.id ? 'primary' : undefined"
-      >
-        <ion-avatar slot="start">
-          <ion-icon [name]="p.metadata?.icon ?? 'key'"></ion-icon>
-        </ion-avatar>
+  <!-- 🔥 BLOQUE DE SERVIDOR EN UNA SOLA LÍNEA -->
 
-        <ion-label>
-          {{ p.label }}
-        </ion-label>
+   <app-server-config></app-server-config>
 
-        <ion-badge slot="end" [style.background]="p.metadata?.color">
-          {{ p.mode }}
-        </ion-badge>
-      </ion-item>
-    }
-  </ion-list>
 
-  <!-- Formulario dinámico -->
-  @if (selectedProvider()) {
+  <!-- 🔥 TÍTULO DE PROVEEDORES -->
+  
+<ion-segment>
+  <ion-segment-button value="local" content-id="local">
+    <ion-label>Local</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="ad" content-id="ad" [disabled]="!isAdAvailable()">
+    <ion-label>AD</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="odoo" content-id="odoo"  [disabled]="!isOdooAvailable()">
+    <ion-label>Odoo</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="unierp" content-id="unierp" [disabled]="!isUnierpAvailable()">
+    <ion-label>Unierp</ion-label>
+  </ion-segment-button>
+</ion-segment>
+<ion-segment-view>
 
-    <!-- Campos dinámicos -->
-    @for (field of fields(); track field.name) {
-      <ion-item>
-        <ion-input
-          [type]="field.type"
-          [placeholder]="field.placeholder"
-          (ionInput)="updateField(field.name, $event.detail.value)"
-        ></ion-input>
-      </ion-item>
-    }
+  <!-- LOCAL -->
+  <ion-segment-content id="local">
+    <ion-item-divider>
+      <ion-label>Acceso Local PINX</ion-label>
+    </ion-item-divider>
 
-    <ion-button expand="block" (click)="submit()">
-      {{ lang.t('provider.submit') }}
+    <ion-list>
+     @for (field of localFields; track field.id) {
+        <ion-item>
+          <ion-label position="stacked">{{ field.label }}</ion-label>
+          <ion-input
+            [type]="field.type"
+            [value]="form()['local']?.[field.id!]"
+            (ionInput)="updateField('local', field.id!, $event.target.value)">
+          </ion-input>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-button expand="block" color="success" (click)="connect('local')">
+      Conectar Local
     </ion-button>
-  }
+  </ion-segment-content>
+
+
+  <!-- AD -->
+  <ion-segment-content id="ad">
+    <ion-item-divider>
+      <ion-label>Active Directory</ion-label>
+    </ion-item-divider>
+
+    <ion-list>
+      @for (field of adFullFields; track field.id) {
+        <ion-item>
+          <ion-label position="stacked">{{ field.label }}</ion-label>
+          <ion-input
+            [type]="field.type"
+            [value]="form()['ad']?.[field.id!]"
+            (ionInput)="updateField('ad', field.id!, $event.target.value)">
+          </ion-input>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-button expand="block" color="success" (click)="connect('ad')">
+      Conectar AD
+    </ion-button>
+  </ion-segment-content>
+
+
+  <!-- ODOO -->
+  <ion-segment-content id="odoo">
+    <ion-item-divider>
+      <ion-label>Odoo / Moradoo</ion-label>
+    </ion-item-divider>
+
+    <ion-list>
+      @for (field of odooFullFields; track field.id) {
+        <ion-item>
+          <ion-label position="stacked">{{ field.label }}</ion-label>
+          <ion-input
+            [type]="field.type"
+            [value]="form()['odoo']?.[field.id!]"
+            (ionInput)="updateField('odoo', field.id!, $event.target.value)">
+          </ion-input>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-button expand="block" color="success" (click)="connect('odoo')">
+      Conectar Odoo
+    </ion-button>
+  </ion-segment-content>
+
+
+  <!-- UNIERP -->
+  <ion-segment-content id="unierp">
+    <ion-item-divider>
+      <ion-label>Unierp</ion-label>
+    </ion-item-divider>
+
+    <ion-list>
+      
+      @for (field of unierpFullFields; track field.id) {
+        <ion-item>
+          <ion-label position="stacked">{{ field.label }}</ion-label>
+          <ion-input
+            [type]="field.type"
+            [value]="form()['unierp']?.[field.id!]"
+            (ionInput)="updateField('unierp', field.id!, $event.target.value)">
+          </ion-input>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-button expand="block" color="success" (click)="connect('unierp')">
+      Conectar Unierp
+    </ion-button>
+  </ion-segment-content>
+
+</ion-segment-view>
 
 </ion-content>

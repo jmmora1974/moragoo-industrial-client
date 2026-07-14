@@ -1,0 +1,143 @@
+:host {
+  display: block;
+
+  /* Color por defecto del provider */
+  --provider-color: #666;
+}
+
+/* ---------------------------------------------
+   SEGMENT PRINCIPAL
+--------------------------------------------- */
+ion-segment {
+  margin: 12px 0;
+  --indicator-color: var(--ion-color-primary);
+  --indicator-height: 3px;
+}
+
+ion-segment-button {
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------
+   CONTENEDOR DE CONTENIDOS
+--------------------------------------------- */
+ion-segment-view {
+  /* El contenido crece libremente */
+  max-height: calc(100vh - 260px);
+  //overflow-y: auto;
+  padding-bottom: 5px;
+}
+
+/* ---------------------------------------------
+   CONTENIDO DE CADA PROVEEDOR
+--------------------------------------------- */
+ion-segment-content {
+  padding: 5px;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------------------------
+   FORMULARIO DINÁMICO
+--------------------------------------------- */
+ion-item {
+  margin-bottom: 8px;
+  --background: var(--ion-color-light);
+  border-radius: 8px;
+
+  /* Acento del provider */
+  --highlight-color-focused: var(--provider-color);
+  --border-color: var(--provider-color);
+}
+
+ion-input {
+  --padding-start: 5px;
+  --padding-end: 5px;
+  font-size: 18px;
+}
+
+/* ---------------------------------------------
+   BOTONES
+--------------------------------------------- */
+ion-button {
+  margin-top: 12px;
+
+  /* Color dinámico del provider */
+  --background: var(--provider-color);
+  --background-focused: var(--provider-color);
+  --background-hover: var(--provider-color);
+  --background-activated: var(--provider-color);
+}
+
+ion-button[fill="clear"] {
+  color: var(--provider-color);
+}
+
+/* ---------------------------------------------
+   CONTENEDOR CON ACENTO DEL PROVIDER
+--------------------------------------------- */
+.provider-color {
+  border-left: 4px solid var(--provider-color);
+  padding-left: 10px;
+  margin-top: 5px;
+}
+
+/* ---------------------------------------------
+   THEMES DINÁMICOS (10 providers posibles)
+--------------------------------------------- */
+@for $i from 1 through 10 {
+  .provider-#{$i} {
+    --provider-color: var(--provider-#{$i});
+  }
+}
+
+/* ---------------------------------------------
+   COLORES DE DEMO (puedes quitarlos)
+--------------------------------------------- */
+
+ion-segment-content:nth-of-type(1) {background: var(--toolbar-background); /* Local */}
+ion-segment-content:nth-of-type(2) {background: var(--toolbar-background); /* AD */}
+ion-segment-content:nth-of-type(3) {background:var(--toolbar-background); /* Odoo */}
+ion-segment-content:nth-of-type(4) {background:var(--toolbar-background); /* Unierp */}
+
+
+ion-content {
+  --background: #1e1e1e;
+  padding: 12px;
+}
+
+ion-item {
+  --background: #2a2a2a;
+  --color: #eee;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+ion-label {
+  color: #ccc;
+}
+
+ion-input {
+  color: #fff;
+}
+
+ion-button {
+  --background: #6a00ff;
+  --background-hover: #7f22ff;
+  --background-focused: #5a00d0;
+  border-radius: 8px;
+  height: 44px;
+}

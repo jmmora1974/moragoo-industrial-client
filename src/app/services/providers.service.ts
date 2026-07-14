@@ -1,16 +1,28 @@
-import { Injectable, signal, effect, inject } from '@angular/core';
+import { Injectable, signal, effect, inject, NgModule } from '@angular/core';
 import { MoragooService } from './moragoo.service';
 import { ProviderInfo } from '../types/provider.type';
+import { LangService } from './lang.service';
+import { SessionService } from './session.service';
+import {  HttpClient } from '@angular/common/http';
+import { BackendService } from './backend.service';
+
 
 @Injectable({ providedIn: 'root' })
+
 export class ProvidersService {
+  
 
   providers = signal<ProviderInfo[]>([]);
   moragooService = inject(MoragooService);
+  langService = inject(LangService);
+  sessionService = inject(SessionService);
+  httpClient = inject(HttpClient);
+  backend= inject(BackendService);
+  
 
   constructor() {
     effect(() => {
-      const host = `${this.moragooService.MoragooServerUrl()}:${this.moragooService.MoragooServerPort()}`;
+      const host = this.moragooService.MoragooServerUrl();
       if (host) this.loadProviders(host);
     });
   }
@@ -18,59 +30,77 @@ export class ProvidersService {
   async loadProviders(host: string) {
     try {
       const res = await fetch(`${host}/api/auth/providers`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) return this.forceLocalPINX();
 
       const raw = await res.json();
-      const normalized = this.normalizeProviders(raw);
+      this.providers.set(this.normalizeProviders(raw));
 
-      this.providers.set(normalized);
-
-    } catch (err) {
-      console.error('Error cargando proveedores:', err);
-      this.providers.set([]);
+    } catch {
+      this.forceLocalPINX();
     }
   }
 
-  normalizeProviders(raw: any[]): ProviderInfo[] {
-    if (!Array.isArray(raw)) return [];
+  normalizeProviders(raw: any): ProviderInfo[] {
+    if (!raw || typeof raw !== 'object') return [];
 
-    return raw.map((p: any) => ({
-      id: p.id,
+    const providers = Object.entries(raw).map(([id, p]: any) => ({
+      id,
       label: p.name,
       type: p.type,
-      activated: true,
-      mode: 'basic',
-      fields: [],          // tu backend aún no devuelve credentials
-      domain: null,
-      capabilities: {},
-      metadata: {}
+      activated: p.activated,
+      mode: p.mode,
+      group: p.group ?? p.mode ?? 'otros',   // 🔥 grupo
+      order: p.order ?? 999,                 // 🔥 orden opcional
+      fields: Array.isArray(p.credentials)
+        ? p.credentials.map((c: any) => ({
+            id: c.id,
+            name: c.id,
+            label: c.label,
+            type: c.type,
+            placeholder: c.label,
+            required: c.required
+          }))
+        : [],
+      domain: p.domain ?? null,
+      capabilities: p.capabilities ?? {},
+      metadata: p.metadata ?? {}
     }));
+
+    // 🔥 LOCAL SIEMPRE PRIMERO
+    providers.sort((a, b) => {
+      if (a.id === 'local') return -1;
+      if (b.id === 'local') return 1;
+      return a.order - b.order;
+    });
+
+    return providers;
   }
 
-  async connect(providerId: string, credentials: any) {
-    const host = `${this.moragooService.MoragooServerUrl()}:${this.moragooService.MoragooServerPort()}`;
 
-    try {
-      const res = await fetch(`${host}/api/auth/connect/${providerId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
+  async authenticate(providerId: string, credentials: Record<string, string>) {
 
-      if (!res.ok) {
-        return { ok: false, error: `Error ${res.status}: ${res.statusText}` };
-      }
+    const provider = this.providers().find(p => p.id === providerId);
+    if (!provider) throw new Error(this.langService.t('providers.error'));
 
-      const data = await res.json();
-      return { ok: true, data };
+    const user = credentials['login_id'] ?? credentials['alias'] ?? '';
+    const pass = credentials['secret_code'] ?? credentials['pinx_code'] ?? '';
 
-    } catch (err) {
-      console.error('Error conectando:', err);
-      return { ok: false, error: 'No se pudo conectar al servidor' };
-    }
+    const fingerprint = this.moragooService.fingerprint();   // 🔥 completo
+    const fpHash = fingerprint?.fingerprint || "";                  // 🔥 hash DIOS
+
+    const payload = {
+      domain: provider.domain?.value ?? "local",
+      user: user,
+      pass: pass,
+      module: this.sessionService.session()?.module ?? 'core',
+      provider: providerId ?? 'local',          
+      fingerprint   // 🔥 completo
+    };
+
+    return this.backend.post('/api/auth/login', payload);
+
   }
 
-  // ✔ PINX local, sin errores TS, sin conflictos
   forceLocalPINX() {
     this.providers.set([
       {
@@ -83,23 +113,18 @@ export class ProvidersService {
           { id: "alias", name: "alias", label: "Alias", type: "text", required: true },
           { id: "pinx_code", name: "pinx_code", label: "PINX", type: "password", required: true }
         ],
-        domain: null,
-        capabilities: {
-          fingerprint: true,
-          mfa: false,
-          totp: false,
-          webauthn: false,
-          passkeys: false,
-          firebase: false,
-          oauth2: false,
-          refresh_token: false
-        },
-        metadata: {
-          color: "#888888",
-          icon: "shield",
-          group: "core"
-        }
+        domain: "local",
+        capabilities: { fingerprint: true },
+        metadata: { color: "#888888", icon: "shield", group: "core" }
       }
     ]);
   }
+
+   // 🔥 LOGOUT industrial
+  logout() {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/logout`;
+    this.sessionService.clearPersistent();
+    return this.httpClient.post(url, {}); // POST es más correcto para logout
+  }
+
 }

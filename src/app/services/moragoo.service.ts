@@ -1,101 +1,96 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { Network } from '@capacitor/network';
+import { App } from '@capacitor/app';
+import { LangService } from './lang.service';
+import { Capacitor } from '@capacitor/core';
+import { FingerprintDios } from '../types/fingerprint.type';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class MoragooService {
-
-  // ---------------------------------------------------------
-  // ESTADO GLOBAL
-  // ---------------------------------------------------------
 
   status = signal<'ready' | 'loading' | 'error'>('ready');
   provider = signal<string | null>(null);
   module = signal<string>('dashboard');
   theme = signal<'industrial' | 'dark' | 'light'>('industrial');
 
-  fingerprint = signal<string>('unknown');
+  fingerprint = signal<FingerprintDios | null>(null);// 🔥 fingerprint DIOS
   deviceInfo = signal<any>(null);
   networkStatus = signal<'online' | 'offline'>('online');
-
   logs = signal<string[]>([]);
 
-  // Variables globales fijas por ahora
-  MoragooServerUrl = signal('http://127.0.0.1');
-  MoragooServerPort = signal('8081');
+  MoragooServerIp = signal('localhost');
+  MoragooServerPort = signal(8081);
+
+  MoragooServerUrl = computed(() =>
+    `http://${this.MoragooServerIp()}:${this.MoragooServerPort()}`
+  );
+
   keepAliveTimer: any;
   MoragooServerAlive = signal(false);
-  refreshRate = signal(5000); // default 5s
+  refreshRate = signal(5000);
 
-  // Estado del servidor
+  langService = inject(LangService);
+
   
+  constructor() {   
+
+    // 🔥 Cargar fingerprint DIOS cuando el host esté listo
+    effect(() => {
+      const host = this.MoragooServerUrl();
+      if (host && !this.fingerprint()) {
+        this.loadFingerprintFromServer();
+      }
+    });
+
+    this.updateRate(this.refreshRate());
+  }
+
+  // ---------------------------------------------------------
+  // FINGERPRINT DIOS
+  // ---------------------------------------------------------
+
+  async loadFingerprintFromServer() {
+    const url = `${this.MoragooServerUrl()}/api/auth/fingerprint`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return;
+
+      const fp = await res.json();
+      this.fingerprint.set(fp);   // 🔥 OBJETO COMPLETO
+      this.addLog('Fingerprint DIOS cargado');
+
+    } catch {
+      this.addLog('Fingerprint DIOS no disponible');
+    }
+  }
+
+  
+  // ---------------------------------------------------------
+  // KEEPALIVE
+  // ---------------------------------------------------------
+
+  async checkServer() {
+    const url = `${this.MoragooServerUrl()}`;
+    try {
+      await fetch(url, { method: 'GET' });
+      this.MoragooServerAlive.set(true);
+    } catch {
+      this.MoragooServerAlive.set(false);
+    }
+  }
 
   updateRate(rate: number) {
     this.refreshRate.set(rate);
 
-    if (this.keepAliveTimer) {
-      clearInterval(this.keepAliveTimer);
-    }
+    if (this.keepAliveTimer) clearInterval(this.keepAliveTimer);
 
     this.keepAliveTimer = setInterval(() => this.checkServer(), rate);
-    this.addLog(`Nueva tasa de refresco: ${rate}ms`);
-  }
-
-  get fullUrl() {
-   // console.log(`${this.MoragooServerUrl()}:${this.MoragooServerPort()}`);
-    return `${this.MoragooServerUrl()}:${this.MoragooServerPort()}`;
-  }
-
-async checkServer() {
-  
-  const url = `${this.fullUrl}`;
-
-  try {
-    const res = await fetch(url, { method: 'GET' });
-    this.MoragooServerAlive.set(true);
-    
-  } catch {
-    this.MoragooServerAlive.set(false);
-    
-  }
-  
-}
-
-  // ---------------------------------------------------------
-  // DISPOSITIVOS Y PROCESOS INDUSTRIALES
-  // ---------------------------------------------------------
-
-  devicesFound = signal<any[]>([]);
-  devicesManaged = signal<any[]>([]);
-  devicesShared = signal<any[]>([]);
-  processes = signal<any[]>([]);
-  alerts = signal<any[]>([]);
-  tasks = signal<any[]>([]);
-
-  // ---------------------------------------------------------
-  // COMPUTED
-  // ---------------------------------------------------------
-
-  isOnline = computed(() => this.networkStatus() === 'online');
-  isReady = computed(() => this.status() === 'ready');
-
-  constructor() {
-    this.initDeviceInfo();
-    this.initNetworkMonitor();
-    this.generateFingerprint();
-    
-    // Iniciar el keepalive con el valor inicial del selector
-    this.updateRate(this.refreshRate())
-
-    effect(() => {
-      this.addLog(`Estado: ${this.status()}`);
-    });
   }
 
   // ---------------------------------------------------------
-  // INIT
+  // DEVICE INFO
   // ---------------------------------------------------------
 
   async initDeviceInfo() {
@@ -108,8 +103,6 @@ async checkServer() {
       osVersion: info.osVersion,
       uuid: id.identifier
     });
-
-    this.addLog('Device info cargado');
   }
 
   async initNetworkMonitor() {
@@ -118,75 +111,31 @@ async checkServer() {
 
     Network.addListener('networkStatusChange', (st) => {
       this.networkStatus.set(st.connected ? 'online' : 'offline');
-      this.addLog(`Network: ${this.networkStatus()}`);
     });
   }
 
-  generateFingerprint() {
-    const fp = `fp-${Math.random().toString(36).substring(2, 12)}`;
-    this.fingerprint.set(fp);
-    this.addLog(`Fingerprint generado: ${fp}`);
+  async getAppVersion() {
+    if (Capacitor.getPlatform() === 'web') return 'web-dev';
+    const info = await App.getInfo();
+    return info.version;
   }
 
   // ---------------------------------------------------------
   // SETTERS
   // ---------------------------------------------------------
 
-  setProvider(p: string | null) {
-    this.provider.set(p);
+  setServer(hostWithPort: string) {
+    const [hostPart, portPart] = hostWithPort.split(':');
+
+    const host = hostPart?.trim() ?? '127.0.0.1';
+    const port = portPart ? parseInt(portPart.trim(), 10) : 8081;
+
+    this.MoragooServerIp.set(host);
+    this.MoragooServerPort.set(isNaN(port) ? 8081 : port);
   }
-
-  setModule(m: string) {
-    this.module.set(m);
-  }
-
-  setTheme(t: 'industrial' | 'dark' | 'light') {
-    this.theme.set(t);
-    this.addLog(`Theme cambiado: ${t}`);
-  }
-
-  setStatus(s: 'ready' | 'loading' | 'error') {
-    this.status.set(s);
-  }
-
-  // ---------------------------------------------------------
-  // DISPOSITIVOS
-  // ---------------------------------------------------------
-
-  setDevicesFound(list: any[]) {
-    this.devicesFound.set(list);
-  }
-
-  setDevicesManaged(list: any[]) {
-    this.devicesManaged.set(list);
-  }
-
-  setDevicesShared(list: any[]) {
-    this.devicesShared.set(list);
-  }
-
-  setProcesses(list: any[]) {
-    this.processes.set(list);
-  }
-
-  setAlerts(list: any[]) {
-    this.alerts.set(list);
-  }
-
-  setTasks(list: any[]) {
-    this.tasks.set(list);
-  }
-
-  // ---------------------------------------------------------
-  // LOGS
-  // ---------------------------------------------------------
 
   addLog(msg: string) {
     const ts = new Date().toISOString();
     this.logs.update(l => [...l, `[${ts}] ${msg}`]);
-  }
-
-  clearLogs() {
-    this.logs.set([]);
   }
 }

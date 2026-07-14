@@ -12,7 +12,7 @@ import { ModalController } from '@ionic/angular/standalone';
   templateUrl: './critical-alert.component.html',
   styleUrls: ['./critical-alert.component.scss'],
   imports: [
-    IonModal,
+    
     IonHeader,
     IonToolbar,
     IonTitle,

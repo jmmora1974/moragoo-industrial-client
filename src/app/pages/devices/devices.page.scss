@@ -1,0 +1,35 @@
+.devices-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 12px;
+}
+
+/* Móvil: se apilan */
+@media (max-width: 768px) {
+  .devices-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.devices-left,
+.devices-right {
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.device-details {
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin: 8px;
+}

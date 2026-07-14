@@ -1,0 +1,56 @@
+<div class="server-grid">
+
+  <!-- HOST -->
+  <ion-item>
+    <ion-label position="stacked">{{ lang.t('server.host') }}</ion-label>
+    <ion-input 
+      type="text" 
+      [value]="host()"
+      (ionInput)="updateHost($event.detail.value || '')">
+    </ion-input>
+  </ion-item>
+
+  <!-- PORT -->
+  <ion-item>
+    <ion-label position="stacked">{{ lang.t('server.port') }}</ion-label>
+    <ion-input
+      type="number"
+      [value]="port()"
+      (ionInput)="updatePort($event.detail.value || '')">
+    </ion-input>
+  </ion-item>
+
+  <!-- STATUS + REFRESH -->
+  <ion-item class="status-refresh">
+    <ion-icon  
+      class="status-dot"
+      [class.ok]="moragooService.MoragooServerAlive()"
+      [class.fail]="!moragooService.MoragooServerAlive()"
+      src="assets/icon/sys-ok.svg">
+    </ion-icon>
+
+    <ion-select
+      class="refresh-select"
+      value="5000"
+      interface="popover"
+      (ionChange)="updateRate($event)">
+      <ion-select-option value="500">0.5s</ion-select-option>
+      <ion-select-option value="1000">1s</ion-select-option>
+      <ion-select-option value="5000">5s</ion-select-option>
+      <ion-select-option value="30000">30s</ion-select-option>
+      <ion-select-option value="60000">1m</ion-select-option>
+      <ion-select-option value="300000">5m</ion-select-option>
+      <ion-select-option value="600000">10m</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- BUTTONS -->
+  <ion-button expand="block" (click)="searchServer()">
+    {{ lang.t('server.search') }}
+  </ion-button>
+
+  <ion-button expand="block" color="primary" (click)="connect()">
+    {{ lang.t('server.connect') }}
+  </ion-button>
+
+</div>
