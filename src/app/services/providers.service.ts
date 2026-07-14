@@ -78,28 +78,32 @@ export class ProvidersService {
 
 
   async authenticate(providerId: string, credentials: Record<string, string>) {
-
     const provider = this.providers().find(p => p.id === providerId);
     if (!provider) throw new Error(this.langService.t('providers.error'));
 
     const user = credentials['login_id'] ?? credentials['alias'] ?? '';
     const pass = credentials['secret_code'] ?? credentials['pinx_code'] ?? '';
 
-    const fingerprint = this.moragooService.fingerprint();   // 🔥 completo
-    const fpHash = fingerprint?.fingerprint || "";                  // 🔥 hash DIOS
+    const fingerprint = this.moragooService.fingerprint();
 
     const payload = {
       domain: provider.domain?.value ?? "local",
-      user: user,
-      pass: pass,
+      user,
+      pass,
       module: this.sessionService.session()?.module ?? 'core',
-      provider: providerId ?? 'local',          
-      fingerprint   // 🔥 completo
+      provider: providerId ?? 'local',
+      fingerprint
     };
-    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/login`;
-    return this.backend.post(url, payload);
 
+    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/login`;
+    const res = await this.backend.post(url, payload);
+
+    // 🔥🔥🔥 SOLO ESTO ES NECESARIO
+    this.backend.setToken(res.token);
+
+    return res;
   }
+
 
   forceLocalPINX() {
     this.providers.set([

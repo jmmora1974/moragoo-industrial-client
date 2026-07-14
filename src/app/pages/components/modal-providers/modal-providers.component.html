@@ -44,14 +44,38 @@
     </ion-item-divider>
 
     <ion-list>
-     @for (field of localFields; track field.id) {
+      @for (field of localFields; track field.id) {
         <ion-item>
           <ion-label position="stacked">{{ field.label }}</ion-label>
-          <ion-input
-            [type]="field.type"
-            [value]="form()['local']?.[field.id!]"
-            (ionInput)="updateField('local', field.id!, $event.target.value)">
-          </ion-input>
+
+          <!-- 🔥 INPUT NORMAL -->
+          @if (field.type !== 'password') {
+            <ion-input
+              [type]="field.type"
+              [value]="form()['local']?.[field.id!]"
+              (ionInput)="updateField('local', field.id!, $event.target.value)"
+              (keyup.enter)="connect('local')"
+            ></ion-input>
+          }
+
+          <!-- 🔥 INPUT PASSWORD -->
+          @if (field.type === 'password') {
+            <ion-input
+              [type]="isPasswordVisible('local', field.id!) ? 'text' : 'password'"
+              autocomplete="off"
+              [value]="form()['local']?.[field.id!]"
+              (ionInput)="updateField('local', field.id!, $event.target.value)"
+              (keyup.enter)="connect('local')"
+            ></ion-input>
+
+            <ion-icon
+              slot="end"
+              [src]="isPasswordVisible('local', field.id!) 
+                ? 'assets/icon/eye-off.svg' 
+                : 'assets/icon/eye.svg'"
+              (click)="togglePassword('local', field.id!)"
+            ></ion-icon>
+          }
         </ion-item>
       }
     </ion-list>
@@ -59,6 +83,8 @@
     <ion-button expand="block" color="success" (click)="connect('local')">
       Conectar Local
     </ion-button>
+
+    
   </ion-segment-content>
 
 
@@ -72,14 +98,41 @@
       @for (field of adFullFields; track field.id) {
         <ion-item>
           <ion-label position="stacked">{{ field.label }}</ion-label>
-          <ion-input
-            [type]="field.type"
-            [value]="form()['ad']?.[field.id!]"
-            (ionInput)="updateField('ad', field.id!, $event.target.value)">
-          </ion-input>
+
+          <!-- 🔥 INPUT NORMAL -->
+          @if (field.type !== 'password') {
+            <ion-input
+              [type]="field.type"
+              [value]="form()['ad']?.[field.id!]"
+              (ionInput)="updateField('ad', field.id!, $event.target.value)"
+              (keyup.enter)="connect('ad')"
+            ></ion-input>
+          }
+
+          <!-- 🔥 INPUT PASSWORD -->
+          @if (field.type === 'password') {
+            <ion-input
+              [type]="isPasswordVisible('ad', field.id!) ? 'text' : 'password'"
+              autocomplete="off"
+              [value]="form()['ad']?.[field.id!]"
+              (ionInput)="updateField('ad', field.id!, $event.target.value)"
+              (keyup.enter)="connect('ad')"
+            ></ion-input>
+
+            <ion-icon
+              slot="end"
+              [src]="isPasswordVisible('ad', field.id!) 
+                ? 'assets/icon/eye-off.svg' 
+                : 'assets/icon/eye.svg'"
+              (click)="togglePassword('ad', field.id!)"
+            ></ion-icon>
+          }
         </ion-item>
       }
     </ion-list>
+
+
+
 
     <ion-button expand="block" color="success" (click)="connect('ad')">
       Conectar AD

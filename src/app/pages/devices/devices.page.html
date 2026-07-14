@@ -1,61 +1,65 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <app-header> </app-header>
+    <app-header></app-header>
     <ion-title>devices</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content >
-   <div class="devices-layout">
-   
-  <!-- SECCIÓN IZQUIERDA: DETECTADOS -->
-  <div class="devices-left">
-    <h2>Detectados</h2>
+<ion-content>
 
-    <ion-accordion-group>
-      @for (dev of detectedDevices(); track dev.id) {
-        <ion-accordion value="{{ dev.id }}">
-          <ion-item slot="header">
-            <ion-label>{{ dev.name }}</ion-label>
-            <ion-badge color="success">{{ dev.ip }}</ion-badge>
-          </ion-item>
+  <div class="devices-layout">
 
-          <div class="device-details" slot="content">
-            <p><strong>Driver:</strong> {{ dev.driver }}</p>
-            <p><strong>Puerto:</strong> {{ dev.port }}</p>
-            <p><strong>Versión:</strong> {{ dev.version }}</p>
+    <!-- Detectados -->
+    <div class="devices-left">
+      <h2>Detectados</h2>
 
-            <ion-button expand="block" color="primary">
-              Añadir a configurados
-            </ion-button>
-          </div>
-        </ion-accordion>
+      <ion-accordion-group>
+        @for (dev of detectedDevices(); track dev.id) {
+          <ion-accordion value="{{ dev.id }}">
+            <ion-item slot="header">
+              <ion-label>{{ dev.name }}</ion-label>
+              <ion-badge color="success">{{ dev.ip }}</ion-badge>
+            </ion-item>
+
+            <div class="device-details" slot="content">
+              <p><strong>Driver:</strong> {{ dev.driver }}</p>
+              <p><strong>Puerto:</strong> {{ dev.port }}</p>
+              <p><strong>Versión:</strong> {{ dev.version }}</p>
+
+              <ion-button expand="block" color="primary"
+                (click)="addToConfigured(dev)">
+                Añadir a configurados
+              </ion-button>
+            </div>
+          </ion-accordion>
+        }
+      </ion-accordion-group>
+    </div>
+
+    <!-- Configurados -->
+    <div class="devices-right">
+      <h2>Configurados</h2>
+
+      @for (dev of configuredDevices(); track dev.id) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ dev.name }}</h3>
+            <p>{{ dev.ip }}:{{ dev.port }}</p>
+          </ion-label>
+
+          <ion-button fill="clear" color="primary"
+            (click)="manageDevice(dev)">
+            Administrar
+          </ion-button>
+
+          <ion-button fill="clear" color="danger"
+            (click)="removeConfigured(dev.id)">
+            Eliminar
+          </ion-button>
+        </ion-item>
       }
-    </ion-accordion-group>
+    </div>
+
   </div>
-
-  <!-- SECCIÓN DERECHA: CONFIGURADOS -->
-  <div class="devices-right">
-    <h2>Configurados</h2>
-
-    @for (dev of configuredDevices(); track dev.id) {
-      <ion-item>
-        <ion-label>
-          <h3>{{ dev.name }}</h3>
-          <p>{{ dev.ip }}:{{ dev.port }}</p>
-        </ion-label>
-
-        <ion-button fill="clear" color="primary">
-          Administrar
-        </ion-button>
-
-        <ion-button fill="clear" color="danger">
-          Eliminar
-        </ion-button>
-      </ion-item>
-    }
-  </div>
-
-</div>
 
 </ion-content>

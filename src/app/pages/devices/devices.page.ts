@@ -1,8 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonContent, IonHeader, IonItem, IonLabel, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+
+import {
+  IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonContent,
+  IonHeader, IonItem, IonLabel, IonTitle, IonToolbar
+} from '@ionic/angular/standalone';
+
 import { HeaderComponent } from '../components/header/header.component';
+import { DevicesService } from '../../services/devices.service';
 import { MoragooService } from '../../services/moragoo.service';
 
 @Component({
@@ -10,81 +16,55 @@ import { MoragooService } from '../../services/moragoo.service';
   templateUrl: './devices.page.html',
   styleUrls: ['./devices.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, ReactiveFormsModule, HeaderComponent, IonToolbar,
-    IonLabel, IonItem, IonButton, IonAccordion, IonAccordionGroup, IonBadge
+  imports: [
+    IonContent, IonHeader, IonTitle, IonToolbar,
+    CommonModule, ReactiveFormsModule, HeaderComponent,
+    IonToolbar, IonLabel, IonItem, IonButton,
+    IonAccordion, IonAccordionGroup, IonBadge
   ]
 })
 export class DevicesPage implements OnInit {
 
+  devicesService = inject(DevicesService);
   moragooService = inject(MoragooService);
-  
-  constructor() { }
+
+  detectedDevices = signal<any[]>([]);
+  configuredDevices = signal<any[]>([]);
 
   ngOnInit() {
+    this.refreshDetected();
+    this.refreshConfigured();
   }
 
-  // 🔥 Lista reactiva de dispositivos detectados
-detectedDevices = signal<any[]>([
-  {
-    id: 'dev-1',
-    name: 'PLC Siemens S7-1200',
-    ip: '192.168.1.10',
-    port: 102,
-    driver: 's7',
-    version: '1.0.3'
-  },
-  {
-    id: 'dev-2',
-    name: 'Modbus TCP Sensor',
-    ip: '192.168.1.20',
-    port: 502,
-    driver: 'modbus',
-    version: '2.1.0'
+  refreshDetected() {
+    this.devicesService.getFound().then(res => {
+      this.detectedDevices.set(Array.isArray(res) ? res : []);
+    });
   }
-]);
 
-
-// 🔥 Lista reactiva de dispositivos configurados
-configuredDevices = signal<any[]>([
-  {
-    id: 'cfg-1',
-    name: 'Robot ABB IRB120',
-    ip: '192.168.1.50',
-    port: 80,
-    driver: 'abb',
-    version: '3.2.1'
+  refreshConfigured() {
+    this.devicesService.getAll().then(res => {
+      this.configuredDevices.set(Array.isArray(res) ? res : []);
+    });
   }
-]);
 
-// 🔥 Getter para detectados
-detectedDevicesList() {
-  return this.detectedDevices();
-}
+  addToConfigured(dev: any) {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/add`;
+    this.devicesService.backendService.post(url, dev)
+      .then(() => this.refreshConfigured());
+  }
 
-// 🔥 Getter para configurados
-configuredDevicesList() {
-  return this.configuredDevices();
-}
+  removeConfigured(index: number) {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/delete`;
+    this.devicesService.backendService.post(url, { index })
+      .then(() => this.refreshConfigured());
+  }
 
-addToConfigured(dev: any) {
-  const list = this.configuredDevices();
-  this.configuredDevices.set([...list, dev]);
-}
-removeConfigured(id: string) {
-  const list = this.configuredDevices();
-  this.configuredDevices.set(list.filter(d => d.id !== id));
-}
-manageDevice(dev: any) {
-  console.log('Administrar dispositivo:', dev);
-  // mañana abrimos modal industrial
-}
-refreshDetected() {
-  console.log('Buscando dispositivos...');
-  // mañana conectamos con MoradooService.scanDevices()
-}
-isOnline(dev: any) {
-  return true; // mañana lo conectamos al ping real
-}
+  manageDevice(dev: any) {
+    console.log('Administrar dispositivo:', dev);
+  }
 
-
+  isOnline(dev: any) {
+    return true;
+  }
 }

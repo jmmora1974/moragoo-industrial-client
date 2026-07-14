@@ -1,28 +1,50 @@
 import { Injectable, inject } from '@angular/core';
 import { BackendService } from './backend.service';
+import { MoragooService } from './moragoo.service';
 
 @Injectable({ providedIn: 'root' })
 export class DevicesService {
 
-  private backend = inject(BackendService);
+  backendService = inject(BackendService);
+  moragooService = inject(MoragooService);
 
+  // ---------------------------------------------------------
+  // DEVICES FOUND
+  // ---------------------------------------------------------
   getFound() {
-    return this.backend.get('/api/devices/found');
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/found`;
+    return this.backendService.get(url);
   }
 
+  // ---------------------------------------------------------
+  // DEVICES SHARED
+  // ---------------------------------------------------------
   getShared() {
-    return this.backend.get('/api/devices/shared');
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared`;
+    return this.backendService.get(url);
   }
 
+  // ---------------------------------------------------------
+  // DEVICES ALL
+  // ---------------------------------------------------------
   getAll() {
-    return this.backend.get('/api/devices/all');
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/all`;
+    return this.backendService.get(url);
   }
 
-  getState() {
-    return this.backend.get('/api/devices/state');
+  // ---------------------------------------------------------
+  // REALTIME STATE (Entradas / Salidas)
+  // ---------------------------------------------------------
+  getState(ip: string, driver: string) {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/state?ip=${ip}&driver=${driver}`;
+    return this.backendService.get(url);
   }
 
-  writeOutput(payload: any) {
-    return this.backend.post('/api/devices/write', payload);
+  // ---------------------------------------------------------
+  // WRITE OUTPUT (PLC)
+  // ---------------------------------------------------------
+  writeOutput(ip: string, bit: number, value: boolean) {
+    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/write?ip=${ip}&bit=${bit}&value=${value}`;
+    return this.backendService.post(url, {});
   }
 }

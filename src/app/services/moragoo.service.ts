@@ -5,6 +5,7 @@ import { App } from '@capacitor/app';
 import { LangService } from './lang.service';
 import { Capacitor } from '@capacitor/core';
 import { FingerprintDios } from '../types/fingerprint.type';
+import { BackendService } from './backend.service';
 
 @Injectable({ providedIn: 'root' })
 export class MoragooService {
@@ -31,6 +32,7 @@ export class MoragooService {
   refreshRate = signal(5000);
 
   langService = inject(LangService);
+  backendSercice= inject(BackendService);
 
   
   constructor() {   
@@ -59,6 +61,10 @@ export class MoragooService {
 
       const fp = await res.json();
       this.fingerprint.set(fp);   // 🔥 OBJETO COMPLETO
+
+      // 🔥 INTEGRACIÓN CRÍTICA
+    this.backendSercice.setFinger(fp.fingerprint);
+
       this.addLog('Fingerprint DIOS cargado');
 
     } catch {

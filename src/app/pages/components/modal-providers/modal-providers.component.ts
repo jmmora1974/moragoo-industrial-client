@@ -12,7 +12,8 @@ import {
   IonInput,
   IonItem,
   IonList,
-  IonItemDivider
+  IonItemDivider,
+  IonIcon
 } from '@ionic/angular/standalone';
 
 import { ModalController } from '@ionic/angular/standalone';
@@ -24,6 +25,7 @@ import { LangService } from '../../../services/lang.service';
 import { ProviderInfo } from 'src/app/types/provider.type';
 import { SessionService } from 'src/app/services/session.service';
 import {ServerConfigComponent  } from '../server-config/server-config.component';
+
 
 @Component({
   selector: 'app-modal-providers',
@@ -46,7 +48,7 @@ import {ServerConfigComponent  } from '../server-config/server-config.component'
     IonHeader,
     IonTitle,
     IonToolbar,
-    
+    IonIcon,
     IonSegment,
     IonSegmentButton,
     IonSegmentContent,
@@ -56,6 +58,8 @@ import {ServerConfigComponent  } from '../server-config/server-config.component'
 ],
 
 })
+
+
 export class ModalProvidersComponent {
 
   modalCtrl = inject(ModalController);
@@ -88,37 +92,47 @@ export class ModalProvidersComponent {
 
   }
 
-
   getForm(list: ProviderInfo[]) {
     const obj: Record<string, Record<string, string>> = {};
 
     for (const p of list) {
       obj[p.id] = {};
 
-      // Campos normales
+      // ---------------------------------------------------
+      // 🔥 CAMPOS NORMALES (solo aquí tocamos)
+      // ---------------------------------------------------
       for (const f of p.fields) {
+
+        // valor inicial vacío
         obj[p.id][f.id!] = '';
+
+        // tipo del campo (text, password, number…)
+        obj[p.id][`${f.id!}__type`] = f.type ?? 'text';
+
+        // si es password → agregar metadata como STRING
+        if (f.type === 'password') {
+          obj[p.id][`${f.id!}__autocomplete`] = 'off';
+          obj[p.id][`${f.id!}__show`] = 'false';   // ← STRING, no boolean
+          obj[p.id][`${f.id!}__icon`] = 'eye';     // ← STRING
+        }
       }
 
-      // Campos de domain
-      if (p.domain?.value !== undefined) obj[p.id]['domain_url'] = p.domain.value;
-      if (p.domain?.port !== undefined) obj[p.id]['domain_port'] = String(p.domain.port);
-      if (p.domain?.database !== undefined) obj[p.id]['domain_db'] = p.domain.database;
-      
-      // Campos de domain
+      // ---------------------------------------------------
+      // 🔥 CAMPOS DOMAIN (NO TOCAR)
+      // ---------------------------------------------------
       if (p.domain?.value !== undefined) obj[p.id]['domain_url'] = p.domain.value;
       if (p.domain?.port !== undefined) obj[p.id]['domain_port'] = String(p.domain.port);
       if (p.domain?.database !== undefined) obj[p.id]['domain_db'] = p.domain.database;
 
-      // Campos de capabilities
+      // ---------------------------------------------------
+      // 🔥 CAMPOS CAPABILITIES (NO TOCAR)
+      // ---------------------------------------------------
       if (Array.isArray(p.capabilities?.fields)) {
         for (const f of p.capabilities.fields) {
           obj[p.id][`cap_${f.id}`] = f.value ?? '';
         }
       }
-
     }
-    
 
     return obj;
   }
@@ -302,6 +316,23 @@ export class ModalProvidersComponent {
 
     return [...p.fields, ...domainFields];
   }
+
+ passwordVisible = signal<Record<string, Record<string, boolean>>>({});
+
+  togglePassword(providerId: string, fieldId: string) {
+    const current = this.passwordVisible();
+    const provider = current[providerId] ?? {};
+    provider[fieldId] = !provider[fieldId];
+    current[providerId] = provider;
+    this.passwordVisible.set({ ...current });
+  }
+
+  isPasswordVisible(providerId: string, fieldId: string) {
+    return this.passwordVisible()[providerId]?.[fieldId] ?? false;
+  }
+
+
+
 
 
 

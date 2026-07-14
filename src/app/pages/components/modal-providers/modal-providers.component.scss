@@ -1,13 +1,9 @@
 :host {
   display: block;
-
-  /* Color por defecto del provider */
   --provider-color: #666;
 }
 
-/* ---------------------------------------------
-   SEGMENT PRINCIPAL
---------------------------------------------- */
+/* SEGMENT */
 ion-segment {
   margin: 12px 0;
   --indicator-color: var(--ion-color-primary);
@@ -20,124 +16,118 @@ ion-segment-button {
   font-weight: 600;
 }
 
-/* ---------------------------------------------
-   CONTENEDOR DE CONTENIDOS
---------------------------------------------- */
 ion-segment-view {
-  /* El contenido crece libremente */
   max-height: calc(100vh - 260px);
-  //overflow-y: auto;
   padding-bottom: 5px;
 }
 
-/* ---------------------------------------------
-   CONTENIDO DE CADA PROVEEDOR
---------------------------------------------- */
 ion-segment-content {
   padding: 5px;
   animation: fadeIn 0.25s ease;
 }
 
-/* Animación suave */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------------------------------------------
-   FORMULARIO DINÁMICO
---------------------------------------------- */
+/* ITEM (input container) */
 ion-item {
-  margin-bottom: 8px;
-  --background: var(--ion-color-light);
+  margin-bottom: 12px;
   border-radius: 8px;
 
-  /* Acento del provider */
+  /* Fondo dinámico según tema */
+  --background: var(--background);
+  --color: var(--color);
+
+  /* Borde industrial */
   --highlight-color-focused: var(--provider-color);
   --border-color: var(--provider-color);
+
+  /* Evitar wrap en inputs largos */
+  white-space: nowrap;
 }
 
+/* LABEL */
+ion-label {
+  color: var(--color);
+  opacity: 0.8;
+}
+
+/* INPUT */
 ion-input {
+  --background: transparent;
+
+  /* Texto dinámico según tema */
+  --color: var(--color);
+
+  /* Placeholder */
+  --placeholder-color: var(--ion-color-medium);
+
   --padding-start: 5px;
   --padding-end: 5px;
+
   font-size: 18px;
+
+  /* Evitar wrap */
+  min-width: 0;
+  flex: 1;
 }
 
-/* ---------------------------------------------
-   BOTONES
---------------------------------------------- */
+/* ICONO DE VISIBILIDAD */
+.password-eye {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+
+  /* Color dinámico según tema */
+  color: var(--accent);
+
+  opacity: 0.9;
+}
+
+/* BOTONES */
 ion-button {
   margin-top: 12px;
-
-  /* Color dinámico del provider */
   --background: var(--provider-color);
-  --background-focused: var(--provider-color);
   --background-hover: var(--provider-color);
-  --background-activated: var(--provider-color);
+  --background-focused: var(--provider-color);
+  border-radius: 8px;
+  height: 44px;
 }
 
 ion-button[fill="clear"] {
   color: var(--provider-color);
 }
 
-/* ---------------------------------------------
-   CONTENEDOR CON ACENTO DEL PROVIDER
---------------------------------------------- */
-.provider-color {
-  border-left: 4px solid var(--provider-color);
-  padding-left: 10px;
-  margin-top: 5px;
+/* PROVIDER BACKGROUND */
+.provider-local,
+.provider-ad,
+.provider-odoo,
+.provider-unierp {
+  background: var(--toolbar-background);
 }
 
-/* ---------------------------------------------
-   THEMES DINÁMICOS (10 providers posibles)
---------------------------------------------- */
-@for $i from 1 through 10 {
-  .provider-#{$i} {
-    --provider-color: var(--provider-#{$i});
-  }
-}
-
-/* ---------------------------------------------
-   COLORES DE DEMO (puedes quitarlos)
---------------------------------------------- */
-
-ion-segment-content:nth-of-type(1) {background: var(--toolbar-background); /* Local */}
-ion-segment-content:nth-of-type(2) {background: var(--toolbar-background); /* AD */}
-ion-segment-content:nth-of-type(3) {background:var(--toolbar-background); /* Odoo */}
-ion-segment-content:nth-of-type(4) {background:var(--toolbar-background); /* Unierp */}
-
-
+/* CONTENT */
 ion-content {
-  --background: #1e1e1e;
+  --background: var(--background);
   padding: 12px;
 }
 
-ion-item {
-  --background: #2a2a2a;
-  --color: #eee;
-  border-radius: 8px;
-  margin-bottom: 12px;
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  ion-input {
+    font-size: 16px;
+  }
+  .password-eye {
+    width: 22px;
+    height: 22px;
+  }
 }
 
-ion-label {
-  color: #ccc;
-}
-
-ion-input {
-  color: #fff;
-}
-
-ion-button {
-  --background: #6a00ff;
-  --background-hover: #7f22ff;
-  --background-focused: #5a00d0;
-  border-radius: 8px;
-  height: 44px;
+/* Wrap permitido solo debajo de 600px */
+@media (max-width: 600px) {
+  ion-item {
+    white-space: normal;
+  }
 }
