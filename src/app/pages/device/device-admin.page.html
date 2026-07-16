@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Administrar {{ device()?.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Segmentos -->
+  <ion-segment value="{{ segment() }}" (ionChange)="changeSegment($event)">
+    <ion-segment-button value="info">
+      <ion-label>Información</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="driver">
+      <ion-label>Driver</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="logs">
+      <ion-label>Logs</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Panel dinámico -->
+  @switch (segment()) {
+
+    @case ('info') {
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <div class="panel">
+              <h2>{{ device()?.name }}</h2>
+              <p><strong>IP:</strong> {{ device()?.ip }}</p>
+              <p><strong>Puerto:</strong> {{ device()?.port }}</p>
+              <p><strong>Driver:</strong> {{ device()?.driver }}</p>
+              <p><strong>Estado:</strong> {{ device()?.status }}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    }
+
+    @case ('driver') {
+      <ion-grid>
+        <ion-row #driverContainer></ion-row>
+      </ion-grid>
+    }
+
+    @case ('logs') {
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <div class="panel">
+              <h2>Logs del dispositivo</h2>
+              <p>Aquí se mostrarán los logs del backend.</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    }
+  }
+
+</ion-content>

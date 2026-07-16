@@ -1,0 +1,20 @@
+.plc-card {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  color: #fff;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  vertical-align: middle;
+  filter: invert(80%) sepia(60%) saturate(300%) hue-rotate(20deg);
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

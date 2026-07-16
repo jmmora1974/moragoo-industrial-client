@@ -1,0 +1,30 @@
+<div class="plc-admin">
+
+  <h3>CPU</h3>
+  <ion-item>
+    <ion-label>
+      Estado: {{ cpuState() }}
+    </ion-label>
+  </ion-item>
+
+  <h3>DBs</h3>
+  @for (db of dbList(); track db.id) {
+    <ion-item>
+      <ion-label>
+        <strong>{{ db.name }}</strong>
+        <p>Tamaño: {{ db.size }} bytes</p>
+      </ion-label>
+    </ion-item>
+  }
+
+  <h3>I/O</h3>
+  @for (io of ioList(); track io.id) {
+    <ion-item>
+      <ion-label>
+        <strong>{{ io.id }}</strong>
+        <p>{{ io.value }}</p>
+      </ion-label>
+    </ion-item>
+  }
+
+</div>

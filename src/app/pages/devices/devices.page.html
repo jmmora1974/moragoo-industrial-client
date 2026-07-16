@@ -1,65 +1,133 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <app-header></app-header>
-    <ion-title>devices</ion-title>
+    <ion-title>Dispositivos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <div class="devices-layout">
+  <ion-grid class="devices-layout">
 
-    <!-- Detectados -->
-    <div class="devices-left">
-      <h2>Detectados</h2>
+    <!-- Columna izquierda: Detectados -->
+    <ion-row>
+      <ion-col size="12" size-md="6" class="left-pane">
 
-      <ion-accordion-group>
-        @for (dev of detectedDevices(); track dev.id) {
-          <ion-accordion value="{{ dev.id }}">
-            <ion-item slot="header">
-              <ion-label>{{ dev.name }}</ion-label>
-              <ion-badge color="success">{{ dev.ip }}</ion-badge>
-            </ion-item>
+        <ion-content class="pane-scroll" scroll-y="true">
 
-            <div class="device-details" slot="content">
-              <p><strong>Driver:</strong> {{ dev.driver }}</p>
-              <p><strong>Puerto:</strong> {{ dev.port }}</p>
-              <p><strong>Versión:</strong> {{ dev.version }}</p>
+          <h2>Detectados</h2>
 
-              <ion-button expand="block" color="primary"
-                (click)="addToConfigured(dev)">
-                Añadir a configurados
-              </ion-button>
-            </div>
-          </ion-accordion>
-        }
-      </ion-accordion-group>
-    </div>
+          @for (dev of detectedDevices(); track dev.id) {
+            <ion-card class="device-card">
 
-    <!-- Configurados -->
-    <div class="devices-right">
-      <h2>Configurados</h2>
+              <ion-card-header>
+                <ion-card-title>
+                  <img [src]="iconFor(dev)" class="icon" />
+                  {{ dev.name }}
+                </ion-card-title>
+                <ion-badge color="success">{{ dev.ip }}</ion-badge>
+              </ion-card-header>
 
-      @for (dev of configuredDevices(); track dev.id) {
-        <ion-item>
-          <ion-label>
-            <h3>{{ dev.name }}</h3>
-            <p>{{ dev.ip }}:{{ dev.port }}</p>
-          </ion-label>
+              <ion-card-content>
+                <p><strong>Driver:</strong> {{ dev.driver }}</p>
+                <p><strong>Puerto:</strong> {{ dev.port }}</p>
+                <p><strong>Versión:</strong> {{ dev.version }}</p>
 
-          <ion-button fill="clear" color="primary"
-            (click)="manageDevice(dev)">
-            Administrar
-          </ion-button>
+                <ion-button expand="block" color="primary"
+                  (click)="addToConfigured(dev)">
+                  Añadir a configurados
+                </ion-button>
+              </ion-card-content>
 
-          <ion-button fill="clear" color="danger"
-            (click)="removeConfigured(dev.id)">
-            Eliminar
-          </ion-button>
-        </ion-item>
-      }
-    </div>
+            </ion-card>
+          }
 
-  </div>
+          @empty {
+            <p class="empty-msg">No se han detectado dispositivos.</p>
+          }
+
+        </ion-content>
+
+      </ion-col>
+
+      <!-- Columna derecha: Segmentos -->
+      <ion-col size="12" size-md="6" class="right-pane">
+
+        <ion-content class="pane-scroll" scroll-y="true">
+
+          <!-- SEGMENTO -->
+          <ion-segment class="segment-bar">
+            <ion-segment-button value="configured" content-id="configured">
+              <ion-label>Configurados</ion-label>
+            </ion-segment-button>
+
+            <ion-segment-button value="shared" content-id="shared">
+              <ion-label>Compartidos</ion-label>
+            </ion-segment-button>
+
+            <ion-segment-button value="managed" content-id="managed">
+              <ion-label>Administrados</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          <ion-segment-view>
+            <!-- VISTA: CONFIGURADOS -->
+            <ion-segment-content id="configured">
+              <h2>Configurados</h2>
+
+              @for (dev of configuredDevices(); track dev.id) {
+                <ion-card class="device-card">
+
+                  <ion-card-header>
+                    <ion-card-title>
+                      <img [src]="iconFor(dev)" class="icon" />
+                      {{ dev.name }}
+                    </ion-card-title>
+                    <ion-badge color="warning">{{ dev.ip }}:{{ dev.port }}</ion-badge>
+                  </ion-card-header>
+
+                  <ion-card-content>
+                    <ion-button expand="block" color="primary"
+                      [routerLink]="['/tabs/device', dev.driver, dev.id]">
+                      Administrar
+                    </ion-button>
+                    <ion-button expand="block" color="terciary"
+                      (click)="shareConfigured(dev.id)">
+                      Compartir
+                    </ion-button>
+
+                    <ion-button expand="block" color="danger"
+                      (click)="removeConfigured(dev.id)">
+                      Eliminar
+                    </ion-button>
+                  </ion-card-content>
+
+                </ion-card>
+              }
+
+              @empty {
+                <p class="empty-msg">No hay dispositivos configurados.</p>
+              }
+            </ion-segment-content>
+
+            <!-- VISTA: COMPARTIDOS -->
+            <ion-segment-content id="shared">
+              <h2>Compartidos</h2>
+              <p class="empty-msg">No hay dispositivos compartidos.</p>
+            </ion-segment-content>
+
+            <!-- VISTA: ADMINISTRADOS -->
+            <ion-segment-content id="managed">
+              <h2>Administrados</h2>
+              <p class="empty-msg">No hay dispositivos administrados.</p>
+              </ion-segment-content>
+          </ion-segment-view>
+
+        </ion-content>
+
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
 
 </ion-content>

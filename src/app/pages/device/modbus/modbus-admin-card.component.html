@@ -1,0 +1,20 @@
+<ion-col size="12" size-md="6" size-lg="4" size-xl="3">
+  <ion-card class="modbus-card">
+
+    <ion-card-header>
+      <ion-card-title>
+        <img src="assets/icons/ind-cable.svg" class="icon" />
+        {{ device()?.name }}
+      </ion-card-title>
+
+      <ion-card-subtitle>
+        {{ device()?.ip }}:{{ device()?.port }}
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+        @Input() device: any;
+    </ion-card-content>
+
+  </ion-card>
+</ion-col>

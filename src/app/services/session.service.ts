@@ -24,7 +24,8 @@ export class SessionService {
     network: navigator.onLine ? 'online' : 'offline',
     user: '',
     roles: [],
-    token: ''
+    token: '',
+    module: 'industrial'
   });
   
   backendService= inject(BackendService);
@@ -44,9 +45,10 @@ export class SessionService {
       mode: s.mode,
       server: s.server,
       user: s.user,
+      token: s.token,
       roles: s.roles,
       provider: s.provider,
-      module: s.module
+      module: "industrial"
     };
 
     localStorage.setItem('moragoo-session', JSON.stringify(safe));
@@ -77,8 +79,9 @@ export class SessionService {
 
         // 🔥 Actualizar sesión
         const updated: SessionData = {
-          ...this.session(),
           ...saved,
+          ...this.session(),
+          
           server: `${url.protocol}//${host}:${port}`
         };
 
@@ -108,7 +111,7 @@ export class SessionService {
     this.session().roles = [];
     this.session().permissions = [];
     this.session().mode = 'guest';
-    this.session().module = 'core';
+    this.session().module = 'industrial';
     this.session().token = '';
 
     // 2) Limpiar persistencia
@@ -147,7 +150,7 @@ export class SessionService {
     const updated: SessionData = {
       ...this.session(),
       mode: this.session().mode || 'guest',
-      module: 'core',
+      module: 'industrial',
       fingerprint,
       server: this.moragooService.MoragooServerUrl()
     };
@@ -162,7 +165,7 @@ export class SessionService {
   // ACTUALIZACIÓN TRAS LOGIN
   // ---------------------------------------------------------
 
-  updateSession(authData: any) {
+  updateSession(authData: SessionData) {
     const current = this.session();
 
     const updated: SessionData = {

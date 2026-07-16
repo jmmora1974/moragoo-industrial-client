@@ -22,9 +22,10 @@ import { CommonModule } from '@angular/common';
 import { ProvidersService } from '../../../services/providers.service';
 import { MoragooService } from '../../../services/moragoo.service';
 import { LangService } from '../../../services/lang.service';
-import { ProviderInfo } from 'src/app/types/provider.type';
-import { SessionService } from 'src/app/services/session.service';
+import { ProviderInfo } from '../../../types/provider.type';
+import { SessionService } from '../../../services/session.service';
 import {ServerConfigComponent  } from '../server-config/server-config.component';
+import { BackendService } from '../../../services/backend.service';
 
 
 @Component({
@@ -76,6 +77,7 @@ export class ModalProvidersComponent {
   isAdAvailable = signal(false);
   isOdooAvailable = signal(false);
   isUnierpAvailable = signal(false);
+  backendService = inject(BackendService);
 
 
 
@@ -161,10 +163,10 @@ export class ModalProvidersComponent {
 
     try {
       const res = await this.providersService.authenticate(providerId, credentials);
-
+      console.log("Respuest connect "+JSON.stringify(res));
       // Log
       this.moragoo.addLog(this.lang.t('log.login_ok'));
-
+      this.backendService.setToken(res.token);
       // Toast
       const toast = await this.toastCtrl.create({
         message: this.lang.t('log.login_ok'),
@@ -174,10 +176,7 @@ export class ModalProvidersComponent {
       toast.present();
 
       // 🔥 Actualizar sesión directamente
-      this.sessionService.updateSession({
-        ...res,
-        provider: providerId
-      });
+      this.sessionService.updateSession({...res,provider: providerId});
 
       // 🔥 Cerrar modal SOLO si login OK
       this.modalCtrl.dismiss({ ok: true });

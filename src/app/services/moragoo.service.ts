@@ -6,9 +6,11 @@ import { LangService } from './lang.service';
 import { Capacitor } from '@capacitor/core';
 import { FingerprintDios } from '../types/fingerprint.type';
 import { BackendService } from './backend.service';
+import { ToastController } from '@ionic/angular/standalone';
 
 @Injectable({ providedIn: 'root' })
 export class MoragooService {
+  
 
   status = signal<'ready' | 'loading' | 'error'>('ready');
   provider = signal<string | null>(null);
@@ -37,14 +39,8 @@ export class MoragooService {
   
   constructor() {   
 
-    // 🔥 Cargar fingerprint DIOS cuando el host esté listo
-    effect(() => {
-      const host = this.MoragooServerUrl();
-      if (host && !this.fingerprint()) {
-        this.loadFingerprintFromServer();
-      }
-    });
-
+    // 🔥 Cargar fingerprint DIOS   
+    this.loadFingerprintFromServer();
     this.updateRate(this.refreshRate());
   }
 
@@ -63,7 +59,7 @@ export class MoragooService {
       this.fingerprint.set(fp);   // 🔥 OBJETO COMPLETO
 
       // 🔥 INTEGRACIÓN CRÍTICA
-    this.backendSercice.setFinger(fp.fingerprint);
+      this.backendSercice.setFinger(fp.fingerprint);
 
       this.addLog('Fingerprint DIOS cargado');
 

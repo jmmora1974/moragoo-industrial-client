@@ -129,10 +129,10 @@ export class HeaderComponent {
       try {
         const res2 = await this.providersService.logout();
       } catch {
-        this.moragooService.addLog(this.langService.t('generic.logout.error'));
+        this.moragooService.addLog(this.langService.t('generic.error'));
 
         const toast = await this.toastCtrl.create({
-          message: this.langService.t('generic.logout.error'),
+          message: this.langService.t('generic.error'),
           duration: 2000,
           color: 'medium'
         });

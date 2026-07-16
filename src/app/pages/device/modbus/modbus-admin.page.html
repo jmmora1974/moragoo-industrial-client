@@ -1,0 +1,40 @@
+<div class="modbus-admin">
+
+  <h3>Registros Holding</h3>
+
+  @for (reg of registers(); track reg.addr) {
+    <ion-item>
+      <ion-label>
+        <strong>Dirección {{ reg.addr }}</strong>
+        <p>Valor: {{ reg.value }}</p>
+      </ion-label>
+
+      <ion-button color="primary">Leer</ion-button>
+      <ion-button color="secondary">Escribir</ion-button>
+    </ion-item>
+  }
+
+  @empty {
+    <p>No hay registros disponibles.</p>
+  }
+
+  <h3>Coils</h3>
+
+  @for (coil of coils(); track coil.addr) {
+    <ion-item>
+      <ion-label>
+        <strong>Coil {{ coil.addr }}</strong>
+        <p>Valor: {{ coil.value }}</p>
+      </ion-label>
+
+      <ion-badge color="{{ coil.value ? 'success' : 'danger' }}">
+        {{ coil.value ? 'ON' : 'OFF' }}
+      </ion-badge>
+    </ion-item>
+  }
+
+  @empty {
+    <p>No hay coils disponibles.</p>
+  }
+
+</div>

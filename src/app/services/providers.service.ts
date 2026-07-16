@@ -96,12 +96,30 @@ export class ProvidersService {
     };
 
     const url = `${this.moragooService.MoragooServerUrl()}/api/auth/login`;
-    const res = await this.backend.post(url, payload);
-
-    // 🔥🔥🔥 SOLO ESTO ES NECESARIO
-    this.backend.setToken(res.token);
-
-    return res;
+    
+  
+    
+/*
+     // 🔥 Actualizar sesión 
+    this.sessionService.updateSession({
+      mode: 'authenticated',
+      sessionName: 'moradoo-session',
+      fingerprint: this.moragooService.fingerprint,
+      device: '',
+      platform: 'web',
+      version: 'web',
+      server: this.moragooService.MoragooServerUrl(),
+      network: navigator.onLine ? 'online' : 'offline',
+      user: res.user,
+      roles: res.roles,
+      token: res.token,
+      module: 'industrial',
+    });
+    this.sessionService.savePersistent();
+    */
+    
+    return await this.backend.post(url, payload);;
+    
   }
 
 

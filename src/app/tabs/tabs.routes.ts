@@ -17,6 +17,18 @@ export const routes: Routes = [
           import('../pages/devices/devices.page').then((m) => m.DevicesPage),
       },
       {
+        path: 'device/:id',
+        loadComponent: () =>
+          import('../pages/device/device-admin.page')
+            .then(m => m.DeviceAdminPage)
+      },
+      {
+        path: 'device/**',
+        loadComponent: () =>
+          import('../pages/device/device-admin.page')
+            .then(m => m.DeviceAdminPage)
+      },
+      {
         path: 'processes',
         loadComponent: () =>
           import('../pages/processes/processes.page').then((m) => m.ProcessesPage),
