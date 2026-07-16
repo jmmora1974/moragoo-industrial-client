@@ -26,7 +26,8 @@ export const routes: Routes = [
         path: 'device/**',
         loadComponent: () =>
           import('../pages/device/device-admin.page')
-            .then(m => m.DeviceAdminPage)
+            .then(m => m.DeviceAdminPage),
+        pathMatch: 'full',
       },
       {
         path: 'processes',

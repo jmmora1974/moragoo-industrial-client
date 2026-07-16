@@ -63,11 +63,17 @@ export class DevicesPage implements OnInit {
   }
 
   addToConfigured(dev: any) {
-    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/add`;
-    this.devicesService.backendService.post(url, dev)
-      .then(() => this.refreshConfigured());
-  }
+  const newDev = {
+    ...dev,
+    id: crypto.randomUUID()
+  };
 
+  const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/add`;
+  this.devicesService.backendService.post(url, newDev)
+    .then(() => this.refreshConfigured());
+}
+
+  
   removeConfigured(id: number) {
     const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/delete`;
     this.devicesService.backendService.post(url, { index: id })

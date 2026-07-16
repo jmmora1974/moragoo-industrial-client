@@ -115,16 +115,16 @@ ion-segment-button {
 @media (max-width: 768px) {
 
   /* Las columnas ya no tienen altura fija */
-  .left-pane,
-  .right-pane {
-    height: auto;
-    display: block; /* evita el colapso del ion-content interno */
-  }
+    .left-pane,
+    .right-pane {
+      height: auto;
+      display: block; /* evita el colapso del ion-content interno */
+    }
 
   /* El ion-content interno debe adaptarse al contenido */
   .pane-scroll {
     height: auto !important;
-    min-height: auto !important;
+    min-height: 90% !important;
     max-height: none !important;
     overflow-y: visible !important; /* deja que Ionic gestione el scroll */
     padding-bottom: 24px; /* evita cortes al final */
