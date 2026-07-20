@@ -20,10 +20,12 @@ export interface FingerprintDios {
 
 
 export interface LoginPayload {
-  domain: string;
-  user: string;
+    user: string;
   pass: string;
-  module: string;
   provider: string;
+  module?: string[];        // ← ARRAY
+  domain: string;
+  db?: string;
+  url?: string;
   fingerprint: FingerprintDios;
 }

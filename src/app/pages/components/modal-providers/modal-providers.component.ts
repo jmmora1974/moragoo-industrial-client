@@ -162,12 +162,8 @@ export class ModalProvidersComponent {
     const credentials = this.form()[providerId];
 
     try {
-      const res = await this.providersService.authenticate(providerId, credentials);
-      console.log("Respuest connect "+JSON.stringify(res));
-      // Log
-      this.moragoo.addLog(this.lang.t('log.login_ok'));
-      this.backendService.setToken(res.token);
-      // Toast
+      await this.providersService.authenticate(providerId, credentials);
+
       const toast = await this.toastCtrl.create({
         message: this.lang.t('log.login_ok'),
         duration: 1000,
@@ -175,16 +171,8 @@ export class ModalProvidersComponent {
       });
       toast.present();
 
-      // 🔥 Actualizar sesión directamente
-      this.sessionService.updateSession({...res,provider: providerId});
-
-      // 🔥 Cerrar modal SOLO si login OK
       this.modalCtrl.dismiss({ ok: true });
-
     } catch (err) {
-
-      this.moragoo.addLog(this.lang.t('log.login_fail'));
-
       const toast = await this.toastCtrl.create({
         message: this.lang.t('log.login_fail'),
         duration: 2500,
@@ -192,9 +180,10 @@ export class ModalProvidersComponent {
       });
       toast.present();
 
-      // ❌ NO cerrar modal
+      //this.modalCtrl.dismiss({ ok: false, error: (err as Error).message });
     }
   }
+
 
   updateProviderAvailability(list: ProviderInfo[]) {
 

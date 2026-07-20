@@ -1,0 +1,25 @@
+<svg class="plc-svg" width="180" height="80" viewBox="0 0 180 80"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Marco general -->
+  <rect class="plc-body" x="2" y="2" width="176" height="76" rx="6"/>
+
+  <!-- CPU -->
+  <rect class="plc-cpu" x="10" y="10" width="50" height="60" rx="4"/>
+
+  <!-- Pantalla CPU -->
+  <rect class="plc-screen" x="18" y="18" width="34" height="18" rx="2"/>
+
+  <!-- LEDs -->
+  <circle class="plc-led-run" cx="25" cy="45" r="4"/>
+  <circle class="plc-led-stop" cx="40" cy="45" r="4"/>
+  <circle class="plc-led-err" cx="32" cy="58" r="4"/>
+
+  <!-- Módulos -->
+  <rect class="plc-module" x="70" y="10" width="30" height="60" rx="4"/>
+  <rect class="plc-module" x="105" y="10" width="30" height="60" rx="4"/>
+  <rect class="plc-module" x="140" y="10" width="30" height="60" rx="4"/>
+
+  <!-- Ventilación -->
+  <line class="plc-vent" x1="12" y1="72" x2="168" y2="72"/>
+</svg>

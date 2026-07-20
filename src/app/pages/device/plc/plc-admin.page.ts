@@ -1,52 +1,87 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonList,
-  IonBadge
+  IonGrid, IonRow, IonCol,
+  IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+  IonItem, IonLabel, IonButton, IonChip, IonImg,
+  IonSegment, IonSegmentButton
 } from '@ionic/angular/standalone';
+
+import { BackendService } from 'src/app/services/backend.service';
+import { DeviceItem } from 'src/app/types/device.type';
 
 @Component({
   selector: 'app-admin-plc',
   standalone: true,
   imports: [
     CommonModule,
-    IonItem,
-    IonLabel,
-    
+    IonGrid, IonRow, IonCol,
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    IonItem, IonLabel, IonButton, IonChip, IonImg,
+    IonSegment, IonSegmentButton, IonCol
   ],
   templateUrl: './plc-admin.page.html',
   styleUrls: ['./plc-admin.page.scss']
 })
 export class PlcAdminPage {
 
-  @Input() device: any;
+  @Input() device!: DeviceItem;
 
-  cpuState = signal('desconocido');
+  // Segment interno tipo TIA Portal
+  segment = signal('cpu');
+
+  // SZL signals
+  cpuState = signal<any>(null);
+  firmware = signal<any>(null);
+  hardware = signal<any>(null);
+  network = signal<any>(null);
+  diagnostic = signal<any>(null);
+  modules = signal<any>(null);
+  clock = signal<any>(null);
+  language = signal<any>(null);
+  lcd = signal<any>(null);
+  warnings = signal<any>(null);
+  startup = signal<any>(null);
+
+  // IO + DBs
   dbList = signal<any[]>([]);
-  ioList = signal<any[]>([]);
+  ioList = signal<{ inputs: any[], outputs: any[] }>({ inputs: [], outputs: [] });
+
+  backendService = inject(BackendService);
 
   ngOnInit() {
     this.loadPLCInfo();
   }
+  
 
-  loadPLCInfo() {
+  changeSegment(ev: any) {
+   //this.loadPLCInfo();
+    this.segment.set(ev.detail.value || 'cpu');
+     
+  }
+
+  async loadPLCInfo() {
     if (!this.device) return;
 
-    this.cpuState.set('RUN');
-    this.dbList.set([
-      { id: 1, name: 'DB1', size: 256 },
-      { id: 2, name: 'DB2', size: 128 }
-    ]);
+    const ip = this.device.ip;
+    const driver = this.device.type;
 
-    this.ioList.set([
-      { id: 'I0.0', value: true },
-      { id: 'I0.1', value: false },
-      { id: 'Q0.0', value: true },
-      { id: 'Q0.1', value: false }
-    ]);
+    const url2 = `/api/device/state?ip=${ip}&driver=${driver}`;
+
+    try {
+      const res2 = await this.backendService.get(url2);
+      const data2 = res2 as any;
+      console.log("State "+JSON.stringify(data2))
+      // PINTAR IO REALES DEL PLC
+      this.ioList.set({
+        inputs: data2.inputs || [],
+        outputs: data2.outputs || []
+      });
+
+    } catch (err) {
+      console.error('Error cargando state IOs PLC:', err);
+    }
   }
+
 }

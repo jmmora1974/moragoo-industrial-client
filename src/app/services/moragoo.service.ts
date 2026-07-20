@@ -8,6 +8,24 @@ import { FingerprintDios } from '../types/fingerprint.type';
 import { BackendService } from './backend.service';
 import { ToastController } from '@ionic/angular/standalone';
 
+const EMPTY_FINGERPRINT: FingerprintDios = {
+  machine: '',
+  mac: '',
+  uuid: '',
+  cpu: '',
+  disk: '',
+  bios: '',
+  motherboard: '',
+  tpm: '',
+  gpu: '',
+  ram: '',
+  os: '',
+  arch: '',
+  fingerprint: '',
+  signature: '',
+  certificate: ''
+};
+
 @Injectable({ providedIn: 'root' })
 export class MoragooService {
   
@@ -17,7 +35,7 @@ export class MoragooService {
   module = signal<string>('dashboard');
   theme = signal<'industrial' | 'dark' | 'light'>('industrial');
 
-  fingerprint = signal<FingerprintDios | null>(null);// 🔥 fingerprint DIOS
+  fingerprint = signal<FingerprintDios>(EMPTY_FINGERPRINT); // 🔥 fingerprint DIOS NOT NULL
   deviceInfo = signal<any>(null);
   networkStatus = signal<'online' | 'offline'>('online');
   logs = signal<string[]>([]);
@@ -47,7 +65,6 @@ export class MoragooService {
   // ---------------------------------------------------------
   // FINGERPRINT DIOS
   // ---------------------------------------------------------
-
   async loadFingerprintFromServer() {
     const url = `${this.MoragooServerUrl()}/api/auth/fingerprint`;
 
@@ -55,18 +72,20 @@ export class MoragooService {
       const res = await fetch(url);
       if (!res.ok) return;
 
-      const fp = await res.json();
-      this.fingerprint.set(fp);   // 🔥 OBJETO COMPLETO
+      const fpd = await res.json() as FingerprintDios;
 
-      // 🔥 INTEGRACIÓN CRÍTICA
-      this.backendSercice.setFinger(fp.fingerprint);
-
+      this.fingerprint.set(fpd);
+      this.backendSercice.setFinger(fpd.fingerprint);
+      this.backendSercice.setBaseUrl(this.MoragooServerUrl());
       this.addLog('Fingerprint DIOS cargado');
 
     } catch {
       this.addLog('Fingerprint DIOS no disponible');
+      this.fingerprint.set(EMPTY_FINGERPRINT);
+      this.backendSercice.setFinger('');
+      this.backendSercice.setBaseUrl('');
     }
-  }
+}
 
   
   // ---------------------------------------------------------

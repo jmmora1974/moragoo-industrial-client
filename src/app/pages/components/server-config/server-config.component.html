@@ -1,5 +1,5 @@
 <div class="server-grid">
-
+ 
   <!-- HOST -->
   <ion-item>
     <ion-label position="stacked">{{ lang.t('server.host') }}</ion-label>
@@ -45,12 +45,16 @@
   </ion-item>
 
   <!-- BUTTONS -->
-  <ion-button expand="block" (click)="searchServer()">
-    {{ lang.t('server.search') }}
-  </ion-button>
-
-  <ion-button expand="block" color="primary" (click)="connect()">
-    {{ lang.t('server.connect') }}
-  </ion-button>
+   
+    <ion-button  (click)="searchServer()">
+      {{ lang.t('server.search') }}
+    </ion-button>
+  
+   
+    <ion-button color="primary" (click)="connect()">
+      {{ lang.t('server.connect') }}
+    </ion-button>
+   
+    
 
 </div>

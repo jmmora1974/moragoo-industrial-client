@@ -23,7 +23,7 @@
     align-items: center;
   }
 
-  ion-button {
+  ion-buttons {
     grid-column: span 3;
   }
 }
@@ -63,4 +63,7 @@ ion-button {
   height: 44px;
   font-weight: 600;
   border-radius: 8px;
+  background-color: var(--background);
+  border: 2px solid  goldenrod  ;
+
 }

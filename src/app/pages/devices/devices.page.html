@@ -9,6 +9,19 @@
 
   <ion-grid class="devices-layout">
 
+    <!-- BOTONES DE ESCANEO -->
+    <ion-row>
+      <ion-col size="12">
+        <ion-button expand="block" color="primary" (click)="scanSafe()">
+          ReScan
+        </ion-button>
+
+        <ion-button expand="block" color="secondary" (click)="scanAdvanced()">
+          Scan Avanzado
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
     <!-- Columna izquierda: Detectados -->
     <ion-row>
       <ion-col size="12" size-md="6" class="left-pane">
@@ -31,7 +44,6 @@
               <ion-card-content>
                 <p><strong>Driver:</strong> {{ dev.driver }}</p>
                 <p><strong>Puerto:</strong> {{ dev.port }}</p>
-                <p><strong>Versión:</strong> {{ dev.version }}</p>
 
                 <ion-button expand="block" color="primary"
                   (click)="addToConfigured(dev)">
@@ -55,7 +67,6 @@
 
         <ion-content class="pane-scroll" scroll-y="true">
 
-          <!-- SEGMENTO -->
           <ion-segment class="segment-bar">
             <ion-segment-button value="configured" content-id="configured">
               <ion-label>Configurados</ion-label>
@@ -69,8 +80,10 @@
               <ion-label>Administrados</ion-label>
             </ion-segment-button>
           </ion-segment>
+
           <ion-segment-view>
-            <!-- VISTA: CONFIGURADOS -->
+
+            <!-- CONFIGURADOS -->
             <ion-segment-content id="configured">
               <h2>Configurados</h2>
 
@@ -87,10 +100,11 @@
 
                   <ion-card-content>
                     <ion-button expand="block" color="primary"
-                      [routerLink]="['/tabs/device', dev.driver]">
+                      (click)="goToDevice(dev)">
                       Administrar
                     </ion-button>
-                    <ion-button expand="block" color="terciary"
+
+                    <ion-button expand="block" color="tertiary"
                       (click)="shareConfigured(dev.id)">
                       Compartir
                     </ion-button>
@@ -109,17 +123,39 @@
               }
             </ion-segment-content>
 
-            <!-- VISTA: COMPARTIDOS -->
+            <!-- COMPARTIDOS -->
             <ion-segment-content id="shared">
               <h2>Compartidos</h2>
-              <p class="empty-msg">No hay dispositivos compartidos.</p>
+
+              @for (dev of sharedDevices(); track dev.id) {
+                <ion-card class="device-card">
+                  <ion-card-header>
+                    <ion-card-title>
+                      <img [src]="iconFor(dev)" class="icon" />
+                      {{ dev.name || 'Compartido' }}
+                    </ion-card-title>
+                  </ion-card-header>
+
+                  <ion-card-content>
+                    <ion-button expand="block" color="danger"
+                      (click)="removeShared(dev.id)">
+                      Eliminar compartido
+                    </ion-button>
+                  </ion-card-content>
+                </ion-card>
+              }
+
+              @empty {
+                <p class="empty-msg">No hay dispositivos compartidos.</p>
+              }
             </ion-segment-content>
 
-            <!-- VISTA: ADMINISTRADOS -->
+            <!-- ADMINISTRADOS -->
             <ion-segment-content id="managed">
               <h2>Administrados</h2>
               <p class="empty-msg">No hay dispositivos administrados.</p>
-              </ion-segment-content>
+            </ion-segment-content>
+
           </ion-segment-view>
 
         </ion-content>

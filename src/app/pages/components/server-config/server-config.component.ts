@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { IonItem, IonLabel, IonInput, IonButton, IonSelect, IonSelectOption, IonIcon } from '@ionic/angular/standalone';
+import { IonItem, IonLabel, IonInput, IonButton, IonSelect, IonSelectOption, IonIcon, IonButtons } from '@ionic/angular/standalone';
 import { LangService } from '../../../services/lang.service';
 import { ProvidersService } from '../../../services/providers.service';
 import { MoragooService } from '../../../services/moragoo.service';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-server-config',
   standalone: true,
-  imports: [IonItem, IonLabel, IonInput, IonButton, IonSelect, IonSelectOption, IonIcon,CommonModule],
+  imports: [IonItem, IonLabel, IonInput, IonButton,  IonSelect, IonSelectOption, IonIcon,CommonModule],
   templateUrl: './server-config.component.html',
   styleUrls: ['./server-config.component.scss']
 })

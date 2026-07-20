@@ -1,3 +1,6 @@
+ion-content{
+  margin: auto;
+}
 .panel {
   padding: 16px;
   background: #1e1e1e;
@@ -10,4 +13,20 @@
 h2 {
   color: #ffd700; /* dorado industrial */
   margin-bottom: 12px;
+}
+
+#container-plantillas{
+  height: 60%;
+  background: --background;
+  border: 5px solic goldenrod;
+}
+
+#gridContaines{
+  margin: auto !important;
+  padding: auto;
+  justify-content: center;
+}
+
+ion-content{
+  margin: auto;
 }

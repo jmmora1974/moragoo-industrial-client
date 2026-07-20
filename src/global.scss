@@ -79,6 +79,24 @@
   --ion-color-dark-contrast-rgb: 255,255,255;
   --ion-color-dark-shade: #1e2023;
   --ion-color-dark-tint: #383a3e;
+
+  /* PLCS */
+   --plc-bg: #2c2c2c;
+  
+  --plc-border: #444;
+  --plc-text: var(--text);
+  --plc-title: #e0c060; /* dorado industrial */
+  --plc-accent: #9f7fff; /* morado Moradoo */
+
+  --plc-led-run: #4caf50;
+  --plc-led-stop: #ff9800;
+  --plc-led-err: #f44336;
+
+  --plc-io-bg: #333;
+  --plc-io-border: #555;
+
+    --plc-bg-light: #6a5f4e;
+  --plc-bg-dark:  #5a4e3f;
 }
 
 :root[data-theme='light'] {
@@ -113,6 +131,7 @@
   --ion-color-secondary-contrast-rgb: 255,255,255;
   --ion-color-secondary-shade: #4854e0;
   --ion-color-secondary-tint: #6370ff;
+
 }
 
 :root[data-theme='industrial'] {
@@ -147,6 +166,15 @@
   --ion-color-secondary-contrast-rgb: 0,0,0;
   --ion-color-secondary-shade: #b8962f;
   --ion-color-secondary-tint: #d8b84b;
+
+  /* PLCS */
+  
+  --plc-bg: #1e1e1e;
+  --plc-bg-dark: #121212;
+  --plc-border: #333;
+  --plc-title: #d4af37; /* dorado industrial */
+  --plc-accent: #6a4fbf; /* morado */
+
 }
 
 :root[data-theme='dark'] {
@@ -178,6 +206,8 @@
   --ion-color-secondary: #34495e;
   --ion-color-secondary-rgb: 52,73,94;
   --ion-color-secondary-contrast: #ffffff;
+
+  --plc-bg: #5a4e3f;
 }
 
 :root[data-theme='industrial-premium'] {
@@ -192,6 +222,12 @@
   --shadow: rgba(0,0,0,0.55);
   --toolbar-background: #1c1c1c;
   --toolbar-color: #e6c200;
+
+   --plc-bg: #1c1c1c;
+  --plc-bg-dark: #101010;
+  --plc-border: #3a3a3a;
+  --plc-title: #e6c200;
+  --plc-accent: #bfa000;
 
   --metal-texture: repeating-linear-gradient(
     90deg,
@@ -214,6 +250,14 @@
   --shadow: rgba(0,255,100,0.25);
   --toolbar-background: #141a14;
   --toolbar-color: #00ff66;
+  
+   --plc-bg: #6a5f4e;
+  
+  --plc-border: #1f2a1f;
+  --plc-title: #00ff66;
+  --plc-accent: #33ff88;
+  --plc-bg-light: #6a5f4e;
+  --plc-bg-dark:  #5a4e3f;
 
   --neon-glow: 0 0 6px rgba(0,255,100,0.6), 0 0 12px rgba(0,255,100,0.4);
 }
@@ -239,4 +283,8 @@ ion-toolbar {
 
 ion-title {
   color: var(--accent);
+}
+
+.plc-frame {
+  background: var(--plc-bg);
 }

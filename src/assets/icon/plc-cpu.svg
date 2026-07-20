@@ -1,0 +1,9 @@
+<svg width="60" height="60" viewBox="0 0 60 60">
+  <rect x="5" y="5" width="50" height="50" rx="6"
+        fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="2"/>
+  <rect x="15" y="15" width="30" height="12" rx="2"
+        fill="var(--bg-soft)" stroke="var(--card-border)" stroke-width="1"/>
+  <circle cx="20" cy="40" r="4" fill="var(--plc-led-run)"/>
+  <circle cx="30" cy="40" r="4" fill="var(--plc-led-stop)"/>
+  <circle cx="40" cy="40" r="4" fill="var(--plc-led-err)"/>
+</svg>

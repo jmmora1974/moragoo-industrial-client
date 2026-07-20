@@ -1,30 +1,94 @@
-<div class="plc-admin">
+<!-- CONTENEDOR PRINCIPAL EN UNA SOLA LÍNEA -->
+<ion-grid class="plc-line" >
 
-  <h3>CPU</h3>
-  <ion-item>
-    <ion-label>
-      Estado: {{ cpuState() }}
-    </ion-label>
-  </ion-item>
+  <!-- INPUTS -->
+  <ion-col size="4" class="io-panel">
+    <h3 class="io-title">Entradas</h3>
 
-  <h3>DBs</h3>
-  @for (db of dbList(); track db.id) {
-    <ion-item>
-      <ion-label>
-        <strong>{{ db.name }}</strong>
-        <p>Tamaño: {{ db.size }} bytes</p>
-      </ion-label>
-    </ion-item>
-  }
+    <div class="io-block">
+      @for (input of ioList().inputs; track $index) {
+        <button 
+          class="io-btn input"
+          [class.on]="ioList().inputs[$index]">
+          I{{ $index }}
+        </button>
 
-  <h3>I/O</h3>
-  @for (io of ioList(); track io.id) {
-    <ion-item>
-      <ion-label>
-        <strong>{{ io.id }}</strong>
-        <p>{{ io.value }}</p>
-      </ion-label>
-    </ion-item>
-  }
+      }
+    </div>
+  </ion-col>
 
-</div>
+  <!-- PLC PANEL CENTRAL -->
+  <ion-col size="4" class="plc-frame">
+
+    <!-- CABECERA -->
+    <ion-row class="plc-header">
+      <ion-col size="12">
+        <ion-img src="assets/icon/plc-generic.svg" class="plc-icon"></ion-img>
+        <ion-label class="plc-title">{{ device?.name }}</ion-label>
+      </ion-col>
+    </ion-row>
+
+    <!-- LEDS -->
+    <ion-row class="plc-led-row">
+      <ion-chip class="plc-led led-run" [class.on]="cpuState()?.state === 'RUN'">
+        <ion-label>RUN</ion-label>
+      </ion-chip>
+      <ion-chip class="plc-led led-stop" [class.on]="cpuState()?.state === 'STOP'">
+        <ion-label>STOP</ion-label>
+      </ion-chip>
+      <ion-chip class="plc-led led-err" [class.on]="cpuState()?.state === 'ERROR'">
+        <ion-label>ERR</ion-label>
+      </ion-chip>
+    </ion-row>
+
+    <!-- TABS SZL -->
+    <ion-segment value="{{ segment() }}" (ionChange)="changeSegment($event)">
+      <ion-segment-button value="cpu">CPU</ion-segment-button>
+      <ion-segment-button value="firmware">Firmware</ion-segment-button>
+      <ion-segment-button value="hardware">Hardware</ion-segment-button>
+      <ion-segment-button value="network">Red</ion-segment-button>
+      <ion-segment-button value="modules">Módulos</ion-segment-button>
+      <ion-segment-button value="diagnostic">Diagnóstico</ion-segment-button>
+    </ion-segment>
+
+    <!-- CONTENIDO SZL -->
+    @switch(segment()) {
+      @case('cpu') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ cpuState() | json }}</pre></ion-card-content></ion-card>
+      }
+      @case('firmware') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ firmware() | json }}</pre></ion-card-content></ion-card>
+      }
+      @case('hardware') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ hardware() | json }}</pre></ion-card-content></ion-card>
+      }
+      @case('network') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ network() | json }}</pre></ion-card-content></ion-card>
+      }
+      @case('modules') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ modules() | json }}</pre></ion-card-content></ion-card>
+      }
+      @case('diagnostic') {
+        <ion-card class="szl-card"><ion-card-content><pre>{{ diagnostic() | json }}</pre></ion-card-content></ion-card>
+      }
+    }
+
+  </ion-col>
+
+  <!-- OUTPUTS -->
+  <ion-col size="4" class="io-panel">
+    <h3 class="io-title">Salidas</h3>
+
+    <div class="io-block">
+      @for (output of ioList().outputs; track $index) {
+        <button 
+          class="io-btn output"
+          [class.on]="ioList().outputs[$index]">
+          Q{{ $index }}
+        </button>
+
+      }
+    </div>
+  </ion-col>
+
+</ion-grid>

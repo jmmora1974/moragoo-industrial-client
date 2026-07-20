@@ -2,33 +2,33 @@ import { inject, Injectable, signal } from '@angular/core';
 import { SessionData } from '../types/session.type';
 import { MoragooService } from './moragoo.service';
 import { LangService } from './lang.service';
-
 import { BackendService } from './backend.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SessionService {
 
   moragooService = inject(MoragooService);
   lang = inject(LangService);
+  backendService = inject(BackendService);
 
   session = signal<SessionData>({
     mode: 'guest',
     sessionName: 'guest-session',
-    fingerprint: {},
+    fingerprint: this.moragooService.fingerprint()?.fingerprint,
     device: 'web-browser',
     platform: 'web',
     version: 'web',
     server: '',
     network: navigator.onLine ? 'online' : 'offline',
     user: '',
-    roles: [],
     token: '',
-    module: 'industrial'
+    modules: [],
+    rolesByModule: {},
+    provider: undefined,
+    email: undefined,
+    avatar: undefined,
+    permissions: []
   });
-  
-  backendService= inject(BackendService);
 
   constructor() {
     this.loadPersistent();
@@ -40,20 +40,19 @@ export class SessionService {
 
   savePersistent() {
     const s = this.session();
-
     const safe = {
       mode: s.mode,
+      fingerprint: this.moragooService.fingerprint()?.fingerprint ?? 'N/A',
       server: s.server,
       user: s.user,
       token: s.token,
-      roles: s.roles,
-      provider: s.provider,
-      module: "industrial"
+      modules: s.modules,
+      rolesByModule: s.rolesByModule,
+      provider: s.provider
     };
 
     localStorage.setItem('moragoo-session', JSON.stringify(safe));
 
-    // Log traducido
     this.moragooService.addLog(this.lang.t('log.session_saved'));
   }
 
@@ -69,19 +68,17 @@ export class SessionService {
 
       if (saved.server) {
         const url = new URL(saved.server);
-
         const host = url.hostname;
         const port = Number(url.port) || 8081;
 
-        // 🔥 Sincronizar MoragooService
+        // Sincronizar MoragooService
         this.moragooService.MoragooServerIp.set(host);
         this.moragooService.MoragooServerPort.set(port);
 
-        // 🔥 Actualizar sesión
+        // Actualizar sesión
         const updated: SessionData = {
-          ...saved,
           ...this.session(),
-          
+          ...saved,
           server: `${url.protocol}//${host}:${port}`
         };
 
@@ -90,11 +87,9 @@ export class SessionService {
         this.moragooService.addLog(
           this.lang.t('log.session_loaded') + ` (${host}:${port})`
         );
-
       } else {
         this.moragooService.addLog(this.lang.t('log.session_invalid'));
       }
-
     } catch (err) {
       console.error('Error cargando sesión persistida:', err);
       this.moragooService.addLog(this.lang.t('log.session_load_error'));
@@ -105,19 +100,25 @@ export class SessionService {
     localStorage.removeItem('moragoo-session');
     this.moragooService.addLog(this.lang.t('log.session_cleared'));
   }
+
   resetSession() {
-    // 1) Limpiar sesión en memoria
-    this.session().user = '';
-    this.session().roles = [];
-    this.session().permissions = [];
-    this.session().mode = 'guest';
-    this.session().module = 'industrial';
-    this.session().token = '';
+    const current = this.session();
 
-    // 2) Limpiar persistencia
+    const reset: SessionData = {
+      ...current,
+      mode: 'guest',
+      user: '',
+      token: '',
+      modules: [],
+      rolesByModule: {},
+      provider: undefined,
+      email: undefined,
+      avatar: undefined,
+      permissions: [],
+    };
+
+    this.session.set(reset);
     this.clearPersistent();
-
-    // 3) Crear sesión nueva desde cero (con fingerprint y server)
     this.startSession();
   }
 
@@ -130,34 +131,26 @@ export class SessionService {
     this.savePersistent();
   }
 
- 
-
- logout() {
-    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/logout`;
-    return this.backendService.post(url, {}); // POST es más correcto para logout
-  
+  logout() {
+    const url = `/api/auth/logout`;
+    return this.backendService.post(url, {});
   }
-
-
 
   // ---------------------------------------------------------
   // INICIO DE SESIÓN
   // ---------------------------------------------------------
 
   async startSession() {
-    const fingerprint = this.moragooService.fingerprint() ?? {};
-
+    const fingerprint = await this.moragooService.fingerprint;
     const updated: SessionData = {
       ...this.session(),
       mode: this.session().mode || 'guest',
-      module: 'industrial',
-      fingerprint,
+      fingerprint: fingerprint()?.fingerprint ?? 'N/A',
       server: this.moragooService.MoragooServerUrl()
     };
 
     this.session.set(updated);
     this.savePersistent();
-
     this.moragooService.addLog(this.lang.t('log.session_started'));
   }
 
@@ -171,11 +164,12 @@ export class SessionService {
     const updated: SessionData = {
       ...current,
       mode: 'authenticated',
+      sessionName: current.sessionName,
       user: authData.user,
-      roles: authData.roles,
       token: authData.token,
       provider: authData.provider,
-      module: authData.module,
+      modules: authData.modules ?? current.modules,
+      rolesByModule: authData.rolesByModule ?? current.rolesByModule,
       email: authData.email,
       avatar: authData.avatar,
       permissions: authData.permissions
@@ -187,12 +181,10 @@ export class SessionService {
     this.moragooService.addLog(
       this.lang.t('log.login_ok') + ` (${authData.user})`
     );
-    
   }
 
   updateServer(host: string, port: number) {
     const current = this.session();
-
     const serverUrl = `http://${host}:${port}`;
 
     const updated: SessionData = {
@@ -207,5 +199,4 @@ export class SessionService {
       this.lang.t('log.session_server_changed') + ` (${host}:${port})`
     );
   }
-
 }

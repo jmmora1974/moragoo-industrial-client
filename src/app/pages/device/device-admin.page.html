@@ -1,63 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Administrar {{ device()?.name }}</ion-title>
+    <app-header></app-header>
+    <ion-title>Dispositivos</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
+<ion-segment>
+  <!-- PLANTILLA BASE DEL PLC -->
+  
 
+  <!-- CARD DINÁMICO DEL DRIVER -->
+  <ion-grid id="gridContaines">
+    
+    <ion-row #driverContainer></ion-row>
+  </ion-grid>
+</ion-segment>
   <!-- Segmentos -->
   <ion-segment value="{{ segment() }}" (ionChange)="changeSegment($event)">
-    <ion-segment-button value="info">
-      <ion-label>Información</ion-label>
-    </ion-segment-button>
-
-    <ion-segment-button value="driver">
-      <ion-label>Driver</ion-label>
-    </ion-segment-button>
-
-    <ion-segment-button value="logs">
-      <ion-label>Logs</ion-label>
-    </ion-segment-button>
+    <ion-segment-button value="info">INFORMACIÓN</ion-segment-button>
+    <ion-segment-button value="driver">DRIVER</ion-segment-button>
+    <ion-segment-button value="logs">LOGS</ion-segment-button>
   </ion-segment>
 
-  <!-- Panel dinámico -->
-  @switch (segment()) {
+  @switch(segment()) {
 
-    @case ('info') {
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12">
-            <div class="panel">
-              <h2>{{ device()?.name }}</h2>
-              <p><strong>IP:</strong> {{ device()?.ip }}</p>
-              <p><strong>Puerto:</strong> {{ device()?.port }}</p>
-              <p><strong>Driver:</strong> {{ device()?.driver }}</p>
-              <p><strong>Estado:</strong> {{ device()?.status }}</p>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+    @case('info') {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h2>{{ device()?.name }}</h2>
+            <p>IP: {{ device()?.ip }}</p>
+            <p>Puerto: {{ device()?.port }}</p>
+            <p>Driver: {{ device()?.driver }}</p>
+            <p>Estado: {{ device()?.status }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
     }
 
-    @case ('driver') {
-      <ion-grid>
-        <ion-row #driverContainer></ion-row>
-      </ion-grid>
+    @case('driver') {
+      <!-- Aquí ya está el card dinámico -->
     }
 
-    @case ('logs') {
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12">
-            <div class="panel">
-              <h2>Logs del dispositivo</h2>
-              <p>Aquí se mostrarán los logs del backend.</p>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+    @case('logs') {
+      <ion-list>
+        <ion-item>
+          <ion-label>Logs del dispositivo</ion-label>
+        </ion-item>
+      </ion-list>
     }
+
   }
 
 </ion-content>

@@ -1,0 +1,6 @@
+<svg width="60" height="60" viewBox="0 0 60 60">
+  <rect x="10" y="10" width="40" height="40" rx="4"
+        fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="2"/>
+  <text x="30" y="35" font-size="14" text-anchor="middle"
+        fill="var(--plc-accent)">R</text>
+</svg>

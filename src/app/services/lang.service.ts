@@ -181,6 +181,12 @@ export class LangService {
       // Dispositivos
       'device.fingerprint.generated': 'Fingerprint generado',
       'device.info.loaded': 'Dispositivo cargado',
+      "device.add_ok": "Dispositivo añadido correctamente",
+      "device.add_failed": "No se pudo añadir el dispositivo",
+      "device.already_configured": "Este dispositivo ya está configurado",
+      "device.missing_owner": "Falta el propietario del dispositivo",
+      "device.share_ok": "Dispositivo compartido correctamente",
+      "device.share_failed": "No se pudo compartir el dispositivo",
 
       // Estado general
       'status': 'Estado',

@@ -18,12 +18,17 @@ import {
   IonLabel,
   IonGrid,
   IonRow,
-  IonCol
+  IonCol,
+  IonItem,
+  IonList,
+  IonCard
 } from '@ionic/angular/standalone';
 
 import { ActivatedRoute } from '@angular/router';
 import { BackendService } from '../../services/backend.service';
 import { MoragooService } from '../../services/moragoo.service';
+import {PlcAdminPage}  from './plc/plc-admin.page'
+import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
   selector: 'app-device-admin',
@@ -41,7 +46,12 @@ import { MoragooService } from '../../services/moragoo.service';
     IonLabel,
     IonGrid,
     IonRow,
-    IonCol
+    IonCol,
+    IonItem,
+    IonList,
+    IonCard,
+HeaderComponent,
+    PlcAdminPage
   ]
 })
 export class DeviceAdminPage implements AfterViewInit {
@@ -71,7 +81,7 @@ export class DeviceAdminPage implements AfterViewInit {
   }
 
   loadDevice() {
-    const url = `${this.moragooService.MoragooServerUrl()}/api/devices/shared/get`;
+    const url = `/api/devices/configured/get`;
 
     this.backendService.post(url, { id: this.deviceId })
       .then(res => {
@@ -88,7 +98,7 @@ export class DeviceAdminPage implements AfterViewInit {
     const driver = this.device()?.driver;
 
     switch (driver) {
-
+      case 's7':
       case 'plc': {
         const { PlcAdminCardComponent } =
           await import('./plc/plc-admin-card.component');

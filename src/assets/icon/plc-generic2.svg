@@ -1,0 +1,31 @@
+<svg width="180" height="80" viewBox="0 0 180 80" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Marco general -->
+  <rect x="2" y="2" width="176" height="76" rx="6"
+        fill="#2c2c2c" stroke="#444" stroke-width="2"/>
+
+  <!-- CPU -->
+  <rect x="10" y="10" width="50" height="60" rx="4"
+        fill="#1e1e1e" stroke="#555" stroke-width="1.5"/>
+
+  <!-- Pantalla CPU -->
+  <rect x="18" y="18" width="34" height="18" rx="2"
+        fill="#0f0f0f" stroke="#777" stroke-width="1"/>
+
+  <!-- LEDs CPU -->
+  <circle cx="25" cy="45" r="4" fill="#4caf50"/> <!-- RUN -->
+  <circle cx="40" cy="45" r="4" fill="#ff9800"/> <!-- STOP -->
+  <circle cx="32" cy="58" r="4" fill="#f44336"/> <!-- ERR -->
+
+  <!-- Módulos -->
+  <rect x="70" y="10" width="30" height="60" rx="4"
+        fill="#1e1e1e" stroke="#555" stroke-width="1.5"/>
+  <rect x="105" y="10" width="30" height="60" rx="4"
+        fill="#1e1e1e" stroke="#555" stroke-width="1.5"/>
+  <rect x="140" y="10" width="30" height="60" rx="4"
+        fill="#1e1e1e" stroke="#555" stroke-width="1.5"/>
+
+  <!-- Líneas de ventilación -->
+  <line x1="12" y1="72" x2="168" y2="72" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+
+</svg>

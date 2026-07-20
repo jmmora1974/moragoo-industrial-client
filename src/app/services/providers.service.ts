@@ -5,6 +5,9 @@ import { LangService } from './lang.service';
 import { SessionService } from './session.service';
 
 import { BackendService } from './backend.service';
+import { AuthResponse } from '../types/auth-response.type';
+import { LoginRequest } from '../types/login-request.type';
+import { LoginPayload } from '../types/fingerprint.type';
 
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +20,7 @@ export class ProvidersService {
   langService = inject(LangService);
   sessionService = inject(SessionService);
   
-  backend= inject(BackendService);
+  backendService= inject(BackendService);
   
 
   constructor() {
@@ -76,52 +79,64 @@ export class ProvidersService {
     return providers;
   }
 
+ async authenticate(providerId: string, credentials: Record<string, string>) {
+  const provider = this.providers().find(p => p.id === providerId);
+  if (!provider) throw new Error(this.langService.t('providers.error'));
 
-  async authenticate(providerId: string, credentials: Record<string, string>) {
-    const provider = this.providers().find(p => p.id === providerId);
-    if (!provider) throw new Error(this.langService.t('providers.error'));
+  const user = credentials['login_id'] ?? credentials['alias'] ?? '';
+  const pass = credentials['secret_code'] ?? credentials['pinx_code'] ?? '';
 
-    const user = credentials['login_id'] ?? credentials['alias'] ?? '';
-    const pass = credentials['secret_code'] ?? credentials['pinx_code'] ?? '';
+  const dblg  = credentials['database']   ?? credentials['db']        ?? credentials['domain_db']  ?? '';
+  const urllg = credentials['odoourl']    ?? credentials['url']       ?? credentials['domain_url'] ?? '';
 
-    const fingerprint = this.moragooService.fingerprint();
+  const fingerprintd = this.moragooService.fingerprint; // signal
 
-    const payload = {
-      domain: provider.domain?.value ?? "local",
-      user,
-      pass,
-      module: this.sessionService.session()?.module ?? 'core',
-      provider: providerId ?? 'local',
-      fingerprint
-    };
+  const payload: LoginPayload = {
+    user,
+    pass,
+    module: ['core'],
+    provider: providerId,
+    domain: provider.domain?.value ?? 'local',
+    db: dblg,
+    url: urllg,
+    fingerprint: fingerprintd() 
+  };
 
-    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/login`;
-    
-  
-    
-/*
-     // 🔥 Actualizar sesión 
-    this.sessionService.updateSession({
-      mode: 'authenticated',
-      sessionName: 'moradoo-session',
-      fingerprint: this.moragooService.fingerprint,
-      device: '',
-      platform: 'web',
-      version: 'web',
-      server: this.moragooService.MoragooServerUrl(),
-      network: navigator.onLine ? 'online' : 'offline',
-      user: res.user,
-      roles: res.roles,
-      token: res.token,
-      module: 'industrial',
-    });
-    this.sessionService.savePersistent();
-    */
-    
-    return await this.backend.post(url, payload);;
-    
+  const url = `/api/auth/login`;
+  const res = await this.backendService.post<AuthResponse>(url, payload);
+  console.log('RESP AUTH :', res);
+
+  // ✅ Validar respuesta SIN status (tu backend no lo manda)
+  if (!res || !res.token) {
+      //Actualizamos el token del backend por seguridad
+  this.backendService.setToken("")
+    throw new Error('auth_failed');
   }
 
+  // ✅ Actualizar sesión industrial
+  this.sessionService.updateSession({
+    sessionName: this.sessionService.session().sessionName,
+    mode: 'authenticated',
+    user: res.user,
+    token: res.token,
+    provider: providerId,
+    modules: res.modules,
+    rolesByModule: res.roles,
+    email: res.email,
+    avatar: res.avatar,
+    permissions: res.permissions,
+    fingerprint: fingerprintd()?.fingerprint
+  });
+  //Actualizamos el token del backend
+  this.backendService.setToken(res.token)
+  // ✅ Log centralizado
+  this.moragooService.addLog(this.langService.t('log.login_ok'));
+
+  return res;
+}
+
+
+ 
 
   forceLocalPINX() {
     this.providers.set([
@@ -144,9 +159,9 @@ export class ProvidersService {
 
    // 🔥 LOGOUT industrial
   logout() {
-    const url = `${this.moragooService.MoragooServerUrl()}/api/auth/logout`;
+    const url = `/api/auth/logout`;
     //this.sessionService.clearPersistent();
-    return this.backend.post(url, {}); // POST es más correcto para logout
+    return this.backendService.post(url, {}); // POST es más correcto para logout
   }
 
 }
