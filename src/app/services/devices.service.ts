@@ -90,11 +90,13 @@ export class DevicesService {
   // REALTIME STATE
   // ---------------------------------------------------------
 
-  getState(ip: string, driver: string) {
-    return this.backend.get(`/api/devices/state?ip=${ip}&driver=${driver}`, {
-      headers: this.moduleHeader()
-    });
-  }
+ getState(ip: string, id: string) {
+  const safeID = encodeURIComponent(id.trim());
+  return this.backend.get(`/api/device/state?ip=${ip}&id=${safeID}`, {
+    headers: this.moduleHeader()
+  });
+}
+
 
   // ---------------------------------------------------------
   // WRITE OUTPUT
