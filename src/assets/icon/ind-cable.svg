@@ -1,3 +1,28 @@
-<svg viewBox="0 0 24 24" fill="currentColor">
-  <path d="M2 7H6V17H2V7M8 7H12V17H8V7M14 7H18V17H14V7M20 7H22V17H20V7Z"/>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Cable principal -->
+  <path d="M10 32 C20 32, 24 20, 32 20 C40 20, 44 32, 54 32"
+        stroke="#50473b" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Conector izquierdo -->
+  <rect x="6" y="28" width="8" height="8" rx="2"
+        stroke="#50473b" stroke-width="3" fill="none"/>
+
+  <!-- Conector derecho -->
+  <rect x="50" y="28" width="8" height="8" rx="2"
+        stroke="#50473b" stroke-width="3" fill="none"/>
+
+  <!-- Pines del conector izquierdo -->
+  <line x1="8" y1="30" x2="8" y2="34"
+        stroke="#50473b" stroke-width="2"/>
+  <line x1="12" y1="30" x2="12" y2="34"
+        stroke="#50473b" stroke-width="2"/>
+
+  <!-- Pines del conector derecho -->
+  <line x1="52" y1="30" x2="52" y2="34"
+        stroke="#50473b" stroke-width="2"/>
+  <line x1="56" y1="30" x2="56" y2="34"
+        stroke="#50473b" stroke-width="2"/>
+
 </svg>

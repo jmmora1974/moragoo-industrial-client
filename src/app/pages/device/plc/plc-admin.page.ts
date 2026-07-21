@@ -67,7 +67,7 @@ export class PlcAdminPage {
     const ip = this.device.ip;
     const driver = this.device.type;
 
-    const url2 = `/api/device/state?ip=${ip}&driver=${driver}`;
+    const url2 = `/api/device/state?ip=${ip}&id=${this.device.id}`;
 
     try {
       const res2 = await this.backendService.get(url2);
